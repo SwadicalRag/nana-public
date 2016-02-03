@@ -38,6 +38,11 @@ local function NewUser(steamID64)
         return users[steamID64].game_name
     end
 
+    function User:SteamID()
+        local steamID = SteamID(self.steamID64)
+        return (sandbox.object:protect(steamID))
+    end
+
     function UserMeta:__tostring()
         return "User ["..self:Nick().."]"
     end
@@ -45,7 +50,8 @@ local function NewUser(steamID64)
     return (sandbox.object:protect(User))
 end
 
-function user.GetBySteamID64(steamID64)
+function user.GetBySteamID64(steamID)
+    local steamID64 = SteamID(steamID):ID64()
     if not users[steamID64] then
         local userData = steamClient.getUserInfo(steamID64)
         if not userData then return false end

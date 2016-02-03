@@ -9,4 +9,4 @@ function include(path)
     return (woahroutine.wrap(load(data,path)))()
 end
 
-include("classes/user.lua")
+include("user.lua")
