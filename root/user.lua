@@ -71,7 +71,7 @@ local function NewUser(steamID64)
     return (sandbox.object:protect(User))
 end
 
-function user.GetBySteamID64(steamID)
+function user.GetBySteamID(steamID)
     local steamID64 = SteamID(steamID):ID64()
     if not users[steamID64] then
         local userData = steamClient.getUserInfo(steamID64)
@@ -86,6 +86,8 @@ function user.GetBySteamID64(steamID)
 
     return userObjectCache[steamID64]
 end
+-- compatibility
+user.GetBySteamID64 = user.GetBySteamID
 
 local function refreshInternalDatabase()
     local _users = steamClient.getAllUserInfo()

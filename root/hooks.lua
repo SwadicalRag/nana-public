@@ -1,5 +1,4 @@
-hook.Add("steamClient.chatMessage","UserMessageHook",function(chatRoom,steamID,msg)
-    if IncomingMessageBlacklist[steamID] then return end
+hook.Add("steamClient.chatMessageEx","UserMessageHook",function(chatRoom,steamID,msg)
     sandbox:CallHook("ChatMessage",sandbox.env.chat.GetBySteamID64(chatRoom),sandbox.env.user.GetBySteamID64(steamID),msg)
 end)
 
