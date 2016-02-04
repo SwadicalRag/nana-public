@@ -4,6 +4,17 @@ sandbox.env.user = user
 local users = {}
 local userObjectCache = {}
 
+local function getServerIP(data)
+    local hostip = data.game_server_ip
+    local ip = {}
+    ip[1] = (hostip & 0xFF000000) >> 24
+    ip[2] = (hostip & 0x00FF0000) >> 16
+    ip[3] = (hostip & 0x0000FF00) >> 8
+    ip[4] = (hostip & 0x000000FF)
+
+    return table.concat(ip,".")..":"..data.game_server_port
+end
+
 local function NewUser(steamID64)
     local UserMeta = {}
     local User = setmetatable({},UserMeta)
@@ -43,6 +54,10 @@ local function NewUser(steamID64)
     function User:SteamLevel()
         local levels = steamClient.getSteamLevels({steamID64})
         return levels[steamID64]
+    end
+
+    function User:GetIP()
+        return getServerIP(users[steamID64])
     end
 
     function UserMeta:__eq(sec)
@@ -122,6 +137,15 @@ hook.Add("steamClient.user","update",function(steamID64,newUserData)
             user,
             oldUserData.game_name,
             newUserData.game_name
+        )
+    end
+
+    if getServerIP(oldUserData) ~= getServerIP(newUserData) then
+        sandbox:CallHook(
+            "UserJoinedServer",
+            user,
+            getServerIP(oldUserData),
+            getServerIP(newUserData)
         )
     end
 
