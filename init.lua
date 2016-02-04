@@ -49,6 +49,7 @@ local function restoreSandbox()
 end
 sandbox.env.RestoreSandbox = restoreSandbox
 sandbox.env.require = function(path)
+    if path:match("[%.%:]") then return error("no can do, pal") end
     return includeSandbox(path..".lua")
 end
 
