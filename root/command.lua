@@ -21,7 +21,7 @@ hook.Add("steamClient.friendMessage","commands",function(steamID,msg)
     if not cmd then return end
 
     local function reply(msg,...)
-        steamClient.chatMessage(steamID,string.format(msg,...))
+        sayEx(steamID,string.format(msg,...))
     end
 
     if command.commands[cmd] then
@@ -39,11 +39,11 @@ hook.Add("steamClient.chatMessage","commands",function(chatRoom,steamID,msg)
     if not cmd then return end
 
     local function reply(msg,...)
-        steamClient.chatMessage(chatRoom,string.format(msg,...))
+        sayEx(chatRoom,string.format(msg,...))
     end
 
     local function replyPersonal(msg,...)
-        steamClient.chatMessage(chatRoom,string.format(msg,...))
+        sayEx(steamID,string.format(msg,...))
     end
 
     if command.commands[cmd] then
