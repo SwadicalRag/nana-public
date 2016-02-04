@@ -40,6 +40,7 @@ include("chats.lua")
 include("command.lua")
 include("commands/basic.lua")
 include("commands/usermanagement.lua")
+include("commands/restart.lua")
 
 include("hooks.lua")
 
