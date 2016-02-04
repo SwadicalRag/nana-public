@@ -37,6 +37,8 @@ end
 include("user.lua")
 include("chats.lua")
 
+include("command.lua")
+
 include("hooks.lua")
 
 local function restoreSandbox()
