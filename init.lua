@@ -44,9 +44,7 @@ include("commands/usermanagement.lua")
 include("hooks.lua")
 
 local function restoreSandbox()
-    includeSandbox("garry.lua")
-    includeSandbox("fn.lua")
-    includeSandbox("sed.lua")
+    includeSandbox("init.lua")
 end
 sandbox.env.RestoreSandbox = restoreSandbox
 sandbox.env.require = function(path)
