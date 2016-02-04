@@ -7,10 +7,10 @@ local userObjectCache = {}
 local function getServerIP(data)
     local hostip = data.game_server_ip
     local ip = {}
-    ip[1] = (hostip & 0xFF000000) >> 24
-    ip[2] = (hostip & 0x00FF0000) >> 16
-    ip[3] = (hostip & 0x0000FF00) >> 8
-    ip[4] = (hostip & 0x000000FF)
+    ip[1] = bit.rshift(bit.band(hostip,0xFF000000),24)
+    ip[2] = bit.rshift(bit.band(hostip,0x00FF0000),16)
+    ip[3] = bit.rshift(bit.band(hostip,0x0000FF00),8)
+    ip[4] = bit.band(hostip,0x000000FF)
 
     return table.concat(ip,".")..":"..data.game_server_port
 end

@@ -19,6 +19,14 @@ local function NewChat(steamID64)
         return (sandbox.object:protect(steamID))
     end
 
+    function Chat:Say(...)
+        return (sandbox:PrintToAudience(steamID64,...))
+    end
+
+    function Chat:SayRaw(...)
+        return (sandbox:RawPrintToAudience(steamID64,...))
+    end
+
     function Chat:Members()
         local members = {}
 
