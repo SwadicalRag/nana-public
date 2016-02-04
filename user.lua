@@ -11,7 +11,7 @@ local function NewUser(steamID64)
     User.steamID64 = steamID64
 
     function User:Nick()
-        return users[self.steamID64].player_name or false
+        return users[steamID64].player_name or false
     end
 
     function User:LastLoggedOn()
@@ -23,10 +23,7 @@ local function NewUser(steamID64)
     end
 
     function User:GetStatus()
-        local status = users[steamID64].persona_state
-        for statusName,enum in pairs(Steam.EPersonaState) do
-            if enum == status then return statusName end
-        end
+        return nameFromEnum("EPersonaState",users[steamID64].persona_state)
     end
 
     function User:IsPlayingGame()
@@ -39,8 +36,17 @@ local function NewUser(steamID64)
     end
 
     function User:SteamID()
-        local steamID = SteamID(self.steamID64)
+        local steamID = SteamID(steamID64)
         return (sandbox.object:protect(steamID))
+    end
+
+    function User:SteamLevel()
+        local levels = steamClient.getSteamLevels({steamID64})
+        return levels[steamID64]
+    end
+
+    function UserMeta:__eq(sec)
+        return self.steamID64 == sec.steamID64
     end
 
     function UserMeta:__tostring()
@@ -66,6 +72,24 @@ function user.GetBySteamID64(steamID)
     return userObjectCache[steamID64]
 end
 
+local function refreshInternalDatabase()
+    local _users = steamClient.getAllUserInfo()
+    for k,v in pairs(_users) do
+        users[k] = v
+    end
+end
+
+function user.GetByName(search)
+    -- refreshInternalDatabase() -- to cache everyone that's nearby
+    -- no need for ^ now
+
+    for id,userData in pairs(users) do
+        if userData.player_name:match(search) then
+            return user.GetBySteamID64(id)
+        end
+    end
+end
+
 function user.GetAudience()
     local chatRoom = steamClient.getChatInfo(sandbox:GetTargetAudience())
     local audience = {}
@@ -78,3 +102,28 @@ function user.GetAudience()
     end
     return audience
 end
+
+hook.Add("steamClient.user","update",function(steamID64,newUserData)
+    local user = user.GetBySteamID64(steamID64)
+    local oldUserData = users[steamID64]
+
+    if oldUserData.persona_state ~= newUserData.persona_state then
+        sandbox:CallHook(
+            "UserStatusChanged",
+            user,
+            nameFromEnum("EPersonaState",oldUserData.persona_state),
+            nameFromEnum("EPersonaState",newUserData.persona_state)
+        )
+    end
+
+    if oldUserData.game_name ~= newUserData.game_name then
+        sandbox:CallHook(
+            "UserPlayingGame",
+            user,
+            oldUserData.game_name,
+            newUserData.game_name
+        )
+    end
+
+    users[steamID64] = newUserData
+end)
