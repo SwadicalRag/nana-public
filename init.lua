@@ -38,6 +38,7 @@ include("user.lua")
 include("chats.lua")
 
 include("command.lua")
+include("commands/basic.lua")
 
 include("hooks.lua")
 

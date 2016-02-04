@@ -25,7 +25,7 @@ hook.Add("steamClient.friendMessage","commands",function(steamID,msg)
     end
 
     if command.commands[cmd] then
-        command.commands[cmd](argStr or "",reply,steamID)
+        command.commands[cmd](argStr or "",reply,reply,steamID)
     else
         reply("Unknown command '%s'",cmd)
     end
@@ -42,8 +42,12 @@ hook.Add("steamClient.chatMessage","commands",function(chatRoom,steamID,msg)
         steamClient.chatMessage(chatRoom,string.format(msg,...))
     end
 
+    local function replyPersonal(msg,...)
+        steamClient.chatMessage(chatRoom,string.format(msg,...))
+    end
+
     if command.commands[cmd] then
-        command.commands[cmd](argStr or "",reply,steamID,chatRoom)
+        command.commands[cmd](argStr or "",reply,replyPersonal,steamID,chatRoom)
     else
         reply("Unknown command '%s'",cmd)
     end
