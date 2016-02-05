@@ -34,6 +34,8 @@ function nameFromEnum(name,value)
     return "Unknown"
 end
 
+include("relay.lua")
+
 include("user.lua")
 include("chats.lua")
 
@@ -41,6 +43,7 @@ include("command.lua")
 include("commands/basic.lua")
 include("commands/usermanagement.lua")
 include("commands/restart.lua")
+include("commands/leave.lua")
 
 include("hooks.lua")
 

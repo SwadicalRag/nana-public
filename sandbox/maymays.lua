@@ -1,6 +1,4 @@
-PrintInternal "AAA"
 cookie.maymays = cookie.maymays or {}
-PrintInternal "HHH"
 setmetatable(cookie.maymays,{
     __tostring = function()
         return "The Meme Forge"
@@ -9,5 +7,3 @@ setmetatable(cookie.maymays,{
         return 420
     end
 })
-
-PrintInternal(cookie.maymays)

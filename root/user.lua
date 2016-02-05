@@ -101,7 +101,7 @@ function user.GetByName(search)
     -- no need for ^ now
 
     for id,userData in pairs(users) do
-        if userData.player_name:match(search) then
+        if userData.player_name:lower():match(search:lower()) then
             return user.GetBySteamID64(id)
         end
     end

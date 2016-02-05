@@ -76,7 +76,7 @@ end
 
 function chat.GetByName(search)
     for id,chatData in pairs(chats) do
-        if chatData.name:match(search) then
+        if chatData.name:lower():match(search:lower()) then
             return chat.GetBySteamID64(id)
         end
     end

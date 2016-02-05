@@ -34,7 +34,11 @@ hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
         if command.commands[cmd].adminOnly and (not IsAdmin(steamID)) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
+        sandbox:PushOwner(steamID)
+        sandbox:PushTargetAudience(steamID)
         command.commands[cmd].callback(argStr or "",reply,reply,user,false)
+        sandbox:PopTargetAudience()
+        sandbox:PopOwner()
     else
         reply("Unknown command '%s'",cmd)
     end
@@ -61,8 +65,14 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
         if command.commands[cmd].adminOnly and (not IsAdmin(steamID)) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
+        sandbox:PushOwner(steamID)
+        sandbox:PushTargetAudience(chatRoomID)
         command.commands[cmd].callback(argStr or "",reply,replyPersonal,user,chatRoom)
+        sandbox:PopTargetAudience()
+        sandbox:PopOwner()
     else
         reply("Unknown command '%s'",cmd)
     end
 end)
+
+hook.Call("CommandModuleReady",command)
