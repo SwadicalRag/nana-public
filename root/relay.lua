@@ -53,18 +53,20 @@ hook.Add("CommandModuleReady","Relay",function(command)
     command.Add("chat",function(targetChat,reply,_,user)
         local userID = user:SteamID():ID64()
         if relay.clients[userID] then
-            sayEx(relay.clients[userID],user:Nick().." disconnected.")
-            reply(user:Nick().." disconnected.")
+            local lastConnected = relay.clients[userID]
             relay.Disconnect(userID)
+            sayEx(lastConnected,user:Nick().." disconnected.")
+            sayEx(userID,user:Nick().." disconnected.")
         else
             if targetChat == "" then return reply("Bad arguments! Usage: chat [name of chatroom]") end
             local chat = chat.GetByName(targetChat)
             if chat then
-                relay.Connect(chat:SteamID():ID64(),userID)
+                local chatID = chat:SteamID():ID64()
                 reply("Relaying %s...",chat:Name())
-                local randomIntSeed = math.tointeger(userID) & (math.pow(2,32) - 1)
+                local randomIntSeed = math.tointeger(userID) & 2^31
                 local ip = randomInt(20,240).."."..randomInt(20,240).."."..randomInt(20,240).."."..randomInt(20,240)
-                sayEx(chat:SteamID():ID64(),user:Nick().." entered chat. (IP: "..ip..")")
+                sayEx(chatID,user:Nick().." entered chat. (IP: "..ip..")")
+                relay.Connect(chatID,userID)
             else
                 reply("Cannot find a chatroom with %s in its name.",targetChat)
             end

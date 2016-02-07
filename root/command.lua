@@ -67,7 +67,11 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
         end
         sandbox:PushOwner(steamID)
         sandbox:PushTargetAudience(chatRoomID)
-        command.commands[cmd].callback(argStr or "",reply,replyPersonal,user,chatRoom)
+        xpcall(command.commands[cmd].callback,function(err)
+            print("error in command "..cmd)
+            print(err)
+            print(debug.traceback())
+        end,argStr or "",reply,replyPersonal,user,chatRoom)
         sandbox:PopTargetAudience()
         sandbox:PopOwner()
     else

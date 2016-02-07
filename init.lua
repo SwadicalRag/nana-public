@@ -34,6 +34,8 @@ function nameFromEnum(name,value)
     return "Unknown"
 end
 
+include("superstring.lua")
+
 include("relay.lua")
 
 include("user.lua")
@@ -46,6 +48,7 @@ include("commands/restart.lua")
 include("commands/leave.lua")
 
 include("hooks.lua")
+include("markov_exp.lua")
 
 local function restoreSandbox()
     includeSandbox("init.lua")
