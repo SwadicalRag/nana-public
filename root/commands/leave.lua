@@ -5,9 +5,9 @@ command.Add("leave",function(_,reply,_,_,room)
     else
         reply("Nana is not in a chatroom!")
     end
-end,"Leaves the current chatroom",nil,true)
+end,"Leaves the current chatroom",nil,COMMAND_MODERATOR)
 
 command.Add("join",function(argStr,reply)
     if not argStr:match("^%d+$") then return reply("Not a steamid64") end
     steamClient.joinChat(argStr)
-end,"Joins a chatroom","<steamid64>",true)
+end,"Joins a chatroom","<steamid64>",COMMAND_MODERATOR)

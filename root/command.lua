@@ -1,13 +1,37 @@
 command = {}
 command.commands = {}
 
-function command.Add(name,callback,description,usage,adminOnly)
+COMMAND_ALL,COMMAND_MODERATOR,COMMAND_ADMIN = 0,1,2
+
+function command.Add(name,callback,description,usage,cmdflag)
     command.commands[name] = {
         callback = callback,
         description = description,
         usage = usage,
-        adminOnly = adminOnly
+        cmdflag = cmdflag or COMMAND_ALL,
+        getRankFlag = function()
+            if cmdflag == COMMAND_ADMIN then
+                return "[ADMIN] "
+            elseif cmdflag == COMMAND_MODERATOR then
+                return "[MODERATOR] "
+            else
+                return ""
+            end
+        end,
+        canUse = function(steamID)
+            if cmdflag == COMMAND_ADMIN then
+                return IsAdmin(steamID)
+            elseif cmdflag == COMMAND_MODERATOR then
+                return IsModerator(steamID) or IsAdmin(steamID)
+            else
+                return true
+            end
+        end
     }
+end
+
+function command.Alias(name1,name2)
+    command.commands[name1] = command.commands[name2]
 end
 
 function command.Remove(name)
@@ -31,12 +55,16 @@ hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
     end
 
     if command.commands[cmd] then
-        if command.commands[cmd].adminOnly and (not IsAdmin(steamID)) then
+        if not command.commands[cmd].canUse(steamID) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
         sandbox:PushOwner(steamID)
         sandbox:PushTargetAudience(steamID)
-        command.commands[cmd].callback(argStr or "",reply,reply,user,false)
+        xpcall(command.commands[cmd].callback,function(err)
+            print("error in command "..cmd)
+            print(err)
+            print(debug.traceback())
+        end,argStr or "",reply,reply,user,false)
         sandbox:PopTargetAudience()
         sandbox:PopOwner()
     else
@@ -62,7 +90,7 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
     end
 
     if command.commands[cmd] then
-        if command.commands[cmd].adminOnly and (not IsAdmin(steamID)) then
+        if not command.commands[cmd].canUse(steamID) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
         sandbox:PushOwner(steamID)

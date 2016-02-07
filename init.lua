@@ -46,6 +46,7 @@ include("commands/basic.lua")
 include("commands/usermanagement.lua")
 include("commands/restart.lua")
 include("commands/leave.lua")
+include("commands/help.lua")
 
 include("hooks.lua")
 include("markov_exp.lua")
