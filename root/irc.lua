@@ -1,20 +1,27 @@
 -- irc.freenode.net
 
-while not irc do
-    print("IRC FFI uninitialised. Waiting...")
+while not irc_freenode do
+    print("Freenode IRC FFI uninitialised. Waiting...")
+    woahroutine.wait(1) -- wait 1 sec
+end
+
+while not irc_gamesurge do
+    print("Gamesurge IRC FFI uninitialised. Waiting...")
     woahroutine.wait(1) -- wait 1 sec
 end
 print("IRC lib initialising...")
 
-irc.join("#lua")
+-- FREENODE
 
-hook.Add("irc.message#lua","relay",function(from,msg,rawMsg)
+irc_freenode.join("#lua")
+
+hook.Add("irc_freenode.message#lua","relay",function(from,msg,rawMsg)
     for _,chat in pairs(chat.GetAll()) do
         chat:Say("<#lua> "..from..": "..msg)
     end
 end)
 
-hook.Add("irc.join#lua","relay",function(nick,rawMsg)
+hook.Add("irc_freenode.join#lua","relay",function(nick,rawMsg)
     for _,chat in pairs(chat.GetAll()) do
         if nick == "nana-bot" then
             chat:Say("<#lua> Connected.")
@@ -24,13 +31,13 @@ hook.Add("irc.join#lua","relay",function(nick,rawMsg)
     end
 end)
 
-hook.Add("irc.part#lua","relay",function(nick,reason,rawMsg)
+hook.Add("irc_freenode.part#lua","relay",function(nick,reason,rawMsg)
     for _,chat in pairs(chat.GetAll()) do
         chat:Say("<#lua> "..nick.." disconnected ["..reason.." | "..rawMsg.host.."]")
     end
 end)
 
-hook.Add("irc.quit#lua","relay",function(nick,reason,channels,rawMsg)
+hook.Add("irc_freenode.quit","relay",function(nick,reason,channels,rawMsg)
     local ok = false
     for _,chan in pairs(channels) do
         if chan == "#lua" then
@@ -44,5 +51,48 @@ hook.Add("irc.quit#lua","relay",function(nick,reason,channels,rawMsg)
 
     for _,chat in pairs(chat.GetAll()) do
         chat:Say("<#lua> "..nick.." quit ["..reason.." | "..rawMsg.host.."]")
+    end
+end)
+
+-- GAMESURGE
+
+irc_gamesurge.join("#gmod")
+
+hook.Add("irc_gamesurge.message#gmod","relay",function(from,msg,rawMsg)
+    for _,chat in pairs(chat.GetAll()) do
+        chat:Say("<#gmod> "..from..": "..msg)
+    end
+end)
+
+hook.Add("irc_gamesurge.join#gmod","relay",function(nick,rawMsg)
+    for _,chat in pairs(chat.GetAll()) do
+        if nick == "nana-bot" then
+            chat:Say("<#gmod> Connected.")
+        else
+            chat:Say("<#gmod> "..nick.." connected ["..rawMsg.host.."]")
+        end
+    end
+end)
+
+hook.Add("irc_gamesurge.part#gmod","relay",function(nick,reason,rawMsg)
+    for _,chat in pairs(chat.GetAll()) do
+        chat:Say("<#gmod> "..nick.." disconnected ["..reason.." | "..rawMsg.host.."]")
+    end
+end)
+
+hook.Add("irc_gamesurge.quit","relay",function(nick,reason,channels,rawMsg)
+    local ok = false
+    for _,chan in pairs(channels) do
+        if chan == "#gmod" then
+            ok = true
+        else
+            print("not ok chan "..chan)
+        end
+    end
+
+    if not ok then return end
+
+    for _,chat in pairs(chat.GetAll()) do
+        chat:Say("<#gmod> "..nick.." quit ["..reason.." | "..rawMsg.host.."]")
     end
 end)
