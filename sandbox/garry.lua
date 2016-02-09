@@ -169,7 +169,6 @@ function table.IsSequential( t )
 	return true
 end
 
---[[
 local function MakeTable( t, nice, indent, done )
 	local str    = ""
 	local done   = done or {}
@@ -211,7 +210,7 @@ local function MakeTable( t, nice, indent, done )
 		end
 	end
 	return str
-end]]
+end
 
 function table.ToString( t, n, nice )
 	local nl, tab  = "", ""
