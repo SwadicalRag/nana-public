@@ -120,6 +120,14 @@ function user.GetAudience()
     return audience
 end
 
+function user.GetAll()
+    local out = {}
+    for id,_ in pairs(users) do
+        out[#out+1] = user.GetBySteamID(id)
+    end
+    return out
+end
+
 hook.Add("steamClient.user","update",function(steamID64,newUserData)
     local user = user.GetBySteamID64(steamID64)
     local oldUserData = users[steamID64]

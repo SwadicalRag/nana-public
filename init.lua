@@ -41,6 +41,8 @@ include("relay.lua")
 include("user.lua")
 include("chats.lua")
 
+include("irc.lua")
+
 include("command.lua")
 include("commands/basic.lua")
 include("commands/usermanagement.lua")

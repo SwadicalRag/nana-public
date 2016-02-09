@@ -58,7 +58,7 @@ local function NewChat(steamID64)
     return (sandbox.object:protect(Chat))
 end
 
-function chat.GetBySteamID64(steamID)
+function chat.GetBySteamID(steamID)
     local steamID64 = SteamID(steamID):ID64()
     if not chats[steamID64] then
         local chatData = steamClient.getChatInfo(steamID64)
@@ -73,6 +73,7 @@ function chat.GetBySteamID64(steamID)
 
     return chatObjectCache[steamID64]
 end
+chat.GetBySteamID64 = chat.GetBySteamID
 
 function chat.GetByName(search)
     for id,chatData in pairs(chats) do
@@ -80,6 +81,14 @@ function chat.GetByName(search)
             return chat.GetBySteamID64(id)
         end
     end
+end
+
+function chat.GetAll()
+    local out = {}
+    for id,_ in pairs(chats) do
+        out[#out+1] = chat.GetBySteamID(id)
+    end
+    return out
 end
 
 hook.Add("steamClient.chat","update",function(steamID64,newChatData)
