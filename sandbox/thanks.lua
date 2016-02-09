@@ -34,6 +34,8 @@ hook.Add("ChatMessage","Thanks",function(chatroom,user,msg)
             table.remove(out,math.random(1,#out))
         end
 
-        chatroom:Say(table.concat(out,"")..(fin or ""))
+        return chatroom:Say(table.concat(out,"")..(fin or ""))
     end
+
+    if msg:lower():match("thanks nana") then chatroom:Say("You're welcome") end
 end)
