@@ -9,7 +9,6 @@ require("maymays")
 require("imagereply")
 
 require("thanks")
+require("morse")
 
-timer.Simple(1,function()
-    require("garry")
-end)
+require("garry")
