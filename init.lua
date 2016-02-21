@@ -11,6 +11,15 @@ function include(path)
     return (woahroutine.wrap(load(data,path)))()
 end
 
+function includeExt(path)
+    local cfile = io.open(path,"rb")
+    if not cfile then return error("Cannot find "..path) end
+    local data = cfile:read("*all")
+    cfile:close()
+
+    return (woahroutine.wrap(load(data,path)))()
+end
+
 function includeSandbox(path)
     local cfile = io.open("user/sandbox/"..path,"rb")
     if not cfile then return error("Cannot find user/sandbox/"..path) end
@@ -63,3 +72,6 @@ sandbox.env.require = function(path)
 end
 
 hook.Add("PostSetupENV","setup",restoreSandbox)
+hook.Add("PostSetupENV","garry",function()
+    -- includeExt("user/sandbox/garry.lua")
+end)

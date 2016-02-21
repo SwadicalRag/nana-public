@@ -15,17 +15,21 @@ end)
 
 hook.Add("steamClient.friendMessage","Relay",function(steamID,msg)
     if relay.clients[steamID] then
+        handlers.push("steam")
         sayRaw(relay.clients[steamID],user.GetBySteamID(steamID):Nick()..": "..msg)
         hook.Call("steamClient.chatMessage",relay.clients[steamID],steamID,msg)
+        handlers.pop()
     end
 end)
 
 hook.Add("steamClient.chatMessage","Relay",function(steamID,userID,msg)
+    handlers.push("steam")
     for clientID,listenID in pairs(relay.clients) do
         if (steamID == listenID) and (userID ~= clientID) then
             sayRaw(clientID,user.GetBySteamID(userID):Nick()..": "..msg)
         end
     end
+    handlers.pop()
 end)
 
 hook.Add("OnMessageDispatch","Relay",function(steamID,msg)

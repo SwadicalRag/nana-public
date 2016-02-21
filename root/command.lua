@@ -51,7 +51,9 @@ hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
     if not cmd then return end
 
     local function reply(msg,...)
+        handlers.push("steam")
         sayEx(steamID,string.format(msg,...))
+        handlers.pop()
     end
 
     if command.commands[cmd] then
@@ -60,11 +62,13 @@ hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
         end
         sandbox:PushOwner(steamID)
         sandbox:PushTargetAudience(steamID)
+        sandbox:PushHandler("steam")
         xpcall(command.commands[cmd].callback,function(err)
             print("error in command "..cmd)
             print(err)
             print(debug.traceback())
         end,argStr or "",reply,reply,user,false)
+        sandbox:PopHandler()
         sandbox:PopTargetAudience()
         sandbox:PopOwner()
     else
@@ -82,11 +86,15 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
     if not cmd then return end
 
     local function reply(msg,...)
+        handlers.push("steam")
         sayEx(chatRoomID,string.format(msg,...))
+        handlers.pop()
     end
 
     local function replyPersonal(msg,...)
+        handlers.push("steam")
         sayEx(steamID,string.format(msg,...))
+        handlers.pop()
     end
 
     if command.commands[cmd] then
@@ -95,11 +103,13 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
         end
         sandbox:PushOwner(steamID)
         sandbox:PushTargetAudience(chatRoomID)
+        sandbox:PushHandler("steam")
         xpcall(command.commands[cmd].callback,function(err)
             print("error in command "..cmd)
             print(err)
             print(debug.traceback())
         end,argStr or "",reply,replyPersonal,user,chatRoom)
+        sandbox:PopHandler()
         sandbox:PopTargetAudience()
         sandbox:PopOwner()
     else
