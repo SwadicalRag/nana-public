@@ -147,7 +147,7 @@ hook.Add("discord.message","commands",function(username,id,msg,chanID)
 
     if command.commands[cmd] then
         if command.commands[cmd].handler and command.commands[cmd].handler ~= "discord" then return end
-        if not command.commands[cmd].canUse(steamID) then
+        if not command.commands[cmd].canUse(id) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
         sandbox:PushTargetAudience(chanID)
