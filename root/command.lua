@@ -135,13 +135,13 @@ hook.Add("discord.message","commands",function(username,id,msg,chanID)
 
     local function reply(msg,...)
         handlers.push("discord")
-        sayEx(chatRoomID,string.format(msg,...))
+        sayEx(chanID,string.format(msg,...))
         handlers.pop()
     end
 
     local function replyPersonal(msg,...)
         handlers.push("discord")
-        sayEx(chatRoomID,string.format(msg,...))
+        sayEx(chanID,string.format(msg,...))
         handlers.pop()
     end
 
