@@ -58,7 +58,7 @@ function discordUser.GetAudience()
 end
 
 function discordUser.GetByName(search)
-    for id,discordUserData in pairs(steamUsers) do
+    for id,discordUserData in pairs(discordUsers) do
         if discordUserData.name:lower():match(search:lower()) then
             return discordUserData.GetByID(id)
         end
