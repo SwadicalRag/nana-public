@@ -58,8 +58,11 @@ hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
     end
 
     if command.commands[cmd] then
+        print 'a'
         print(commands.commands[cmd].handler and (commands.commands[cmd].handler ~= "steam"),commands.commands[cmd].handler,(commands.commands[cmd].handler ~= "steam"))
+        print 'b'
         if commands.commands[cmd].handler and (commands.commands[cmd].handler ~= "steam") then return end
+        print 'c'
         if not command.commands[cmd].canUse(steamID) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
@@ -101,7 +104,11 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
     end
 
     if command.commands[cmd] then
+        print 'a'
+        print(commands.commands[cmd].handler and (commands.commands[cmd].handler ~= "steam"),commands.commands[cmd].handler,(commands.commands[cmd].handler ~= "steam"))
+        print 'b'
         if commands.commands[cmd].handler and commands.commands[cmd].handler ~= "steam" then return end
+        print 'b'
         if not command.commands[cmd].canUse(steamID) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
