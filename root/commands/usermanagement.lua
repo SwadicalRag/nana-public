@@ -5,7 +5,7 @@ command.Add("rank",function(argStr,reply)
     end
 
     -- not FindByName just in case people change their names to our wanted target
-    local targetUser = steamUser.GetBySteamID64(steamID64) or discordUser.GetByID(steamID64)
+    local targetUser = discordUser.GetByID(steamID64) or steamUser.GetBySteamID64(steamID64)
     if targetRank == "admin" then
         SetAdmin(steamID64,true)
         reply("Set %s's rank to admin",targetUser and targetUser:Nick() or steamID64)
@@ -32,7 +32,7 @@ command.Add("limit",function(argStr,reply)
     end
 
     -- not FindByName just in case people change their names to our wanted target
-    local targetUser = steamUser.GetBySteamID64(steamID64) or discordUser.GetByID(steamID64)
+    local targetUser = discordUser.GetByID(steamID64) or steamUser.GetBySteamID64(steamID64)
     if targetState == "true" then
         SetBlacklist(steamID64,true)
         reply("Blacklisted %s from using the bot",targetUser and targetUser:Nick() or steamID64)
