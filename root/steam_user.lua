@@ -33,6 +33,17 @@ local function NewUser(steamID64)
         return false
     end
 
+    function User:IsSkid()
+        http.Fetch("https://steamcommunity.com/profiles/"..self:SteamID():ID64(),woahroutine.this())
+        local body,code = woahroutine.yield()
+        body = body:lower()
+        if body:match("hack") or body:match("skid") or body:match("ddos") then
+            return true
+        else
+            return false
+        end
+    end
+
     function User:LastLoggedOn()
         return steamUsers[steamID64].last_logon or false
     end
