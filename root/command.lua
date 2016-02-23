@@ -162,7 +162,7 @@ hook.Add("discord.messageEx","commands",function(username,id,msg,chanID)
         sandbox:PopTargetAudience()
         sandbox:PopOwner()
     else
-        reply("Unknown command '%s'",cmd)
+        -- reply("Unknown command '%s'",cmd)
     end
 end)
 
