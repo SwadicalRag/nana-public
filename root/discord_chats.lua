@@ -56,6 +56,15 @@ local function NewChannel(id)
         return discordChannels[id].serverName
     end
 
+    function Channel:GetInvite()
+        local invite = discord.createInvite(id)
+        if invite then
+            return invite.code,string.format("This invite will last for %d seconds",invite.maxAge)
+        else
+            return false
+        end
+    end
+
     function ChannelMeta:__eq(sec)
         return self.id == sec.id
     end

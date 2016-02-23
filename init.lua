@@ -53,6 +53,8 @@ include("steam_chats.lua")
 include("discord_user.lua")
 include("discord_chats.lua")
 
+include("greeting.lua")
+
 -- include("irc.lua")
 
 include("command.lua")
