@@ -79,5 +79,5 @@ hook.Add("CommandModuleReady","Relay",function(command)
             end
             handlers.pop()
         end
-    end,"Joins a chatroom with nana as a relay.","[name of chatroom]")
+    end,"Joins a chatroom with nana as a relay.","[name of chatroom]",nil,"steam")
 end)

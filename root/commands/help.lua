@@ -11,7 +11,7 @@ command.Add("help",function(argStr,reply,replyPersonal,user,chatroom)
         )
     end
     replyPersonal("== END ==\n")
-    if chatroom then
+    if chatroom and handlers.top() == "steam" then
         reply("I have PM'd you the commands, %s.\nPlease be sure to %sadd me if you haven't already.",user:Nick(),COMMAND_PREFIX)
     end
 end,"how 2 use bot commands????")
