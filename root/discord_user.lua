@@ -60,7 +60,7 @@ end
 function discordUser.GetByName(search)
     for id,discordUserData in pairs(discordUsers) do
         if discordUserData.username:lower():match(search:lower()) then
-            return discordUserData.GetByID(id)
+            return discordUser.GetByID(id)
         end
     end
 end
