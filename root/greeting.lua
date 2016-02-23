@@ -11,7 +11,7 @@ hook.Add("discord.userStatusChanged","greet",function(id,oldStatus,newStatus)
 end)
 
 function sandbox.env.GetHelpMessage(id)
-    local user = id and discordUser.GetByID(id) or Me
+    local user = id and discordUser.GetByID(id) or sandbox.env.Me
     return string.format(
         "Hello @%s! Enjoy your stay.\n\n"..
         "I am a lua bot connected to the discord and steam group chat.\n"..
