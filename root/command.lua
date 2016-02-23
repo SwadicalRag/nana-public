@@ -124,7 +124,7 @@ hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
     end
 end)
 
-hook.Add("discord.message","commands",function(username,id,msg,chanID)
+hook.Add("discord.messageEx","commands",function(username,id,msg,chanID)
     if msg:sub(1,1) ~= COMMAND_PREFIX then return end
     local user = discordUser.GetByID(id)
     local chatRoom = discordChannel.GetByID(chanID)

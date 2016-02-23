@@ -16,7 +16,7 @@ hook.Add("steamClient.chatUserLeft","UserJoinHook",function(chatID,steamID)
     sandbox:PopHandler()
 end)
 
-hook.Add("discord.message","UserMessageHook",function(username,userID,msg,channelID)
+hook.Add("discord.messageEx","UserMessageHook",function(username,userID,msg,channelID)
     sandbox:PushHandler("discord")
     sandbox:CallHook("ChatMessage",sandbox.env.discordChannel.GetByID(channelID),sandbox.env.discordUser.GetByID(userID),msg)
     sandbox:PopHandler()
