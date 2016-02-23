@@ -1,3 +1,5 @@
+if true then return end
+
 local sqt = dofile("libs/sqlite_table.lua")
 
 local Markov = {}
