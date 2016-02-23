@@ -150,9 +150,9 @@ hook.Add("discord.message","commands",function(username,id,msg,chanID)
         if not command.commands[cmd].canUse(steamID) then
             return reply("%s, you do not have enough permissions to run this command.",user:Nick())
         end
-        protector:PushTargetAudience(chanID)
-        protector:PushOwner(id)
-        protector:PushHandler("discord")
+        sandbox:PushTargetAudience(chanID)
+        sandbox:PushOwner(id)
+        sandbox:PushHandler("discord")
         xpcall(command.commands[cmd].callback,function(err)
             print("error in command "..cmd)
             print(err)
