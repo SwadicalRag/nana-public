@@ -116,5 +116,5 @@ function Markov:Generate(start,maxLength,depth)
 end
 
 timer.Simple(1,function()
-    sandbox.env.Markov = Markov
+    -- sandbox.env.Markov = Markov
 end)

@@ -16,26 +16,28 @@ end)
 hook.Add("steamClient.friendMessage","Relay",function(steamID,msg)
     if relay.clients[steamID] then
         handlers.push("steam")
-        sayRaw(relay.clients[steamID],user.GetBySteamID(steamID):Nick()..": "..msg)
+        sayRaw(relay.clients[steamID],steamUser.GetBySteamID(steamID):Nick()..": "..msg)
         hook.Call("steamClient.chatMessage",relay.clients[steamID],steamID,msg)
         handlers.pop()
     end
 end)
 
 hook.Add("steamClient.chatMessage","Relay",function(steamID,userID,msg)
-    handlers.push("steam")
     for clientID,listenID in pairs(relay.clients) do
         if (steamID == listenID) and (userID ~= clientID) then
-            sayRaw(clientID,user.GetBySteamID(userID):Nick()..": "..msg)
+            handlers.push("steam")
+            sayRaw(clientID,steamUser.GetBySteamID(userID):Nick()..": "..msg)
+            handlers.pop()
         end
     end
-    handlers.pop()
 end)
 
 hook.Add("OnMessageDispatch","Relay",function(steamID,msg)
     for clientID,listenID in pairs(relay.clients) do
         if steamID == listenID then
+            handlers.push("steam")
             sayRaw(clientID,msg)
+            handlers.pop()
         end
     end
 end)
@@ -55,6 +57,7 @@ end
 
 hook.Add("CommandModuleReady","Relay",function(command)
     command.Add("chat",function(targetChat,reply,_,user)
+        handlers.push("steam")
         local userID = user:SteamID():ID64()
         if relay.clients[userID] then
             local lastConnected = relay.clients[userID]
@@ -62,18 +65,19 @@ hook.Add("CommandModuleReady","Relay",function(command)
             sayEx(lastConnected,user:Nick().." disconnected.")
             sayEx(userID,user:Nick().." disconnected.")
         else
-            if targetChat == "" then return reply("Bad arguments! Usage: chat [name of chatroom]") end
-            local chat = chat.GetByName(targetChat)
+            if targetChat == "" then return reply("Bad arguments! Usage: chat [name of chatroom]"),handlers.pop() end
+            local chat = steamChat.GetByName(targetChat)
             if chat then
                 local chatID = chat:SteamID():ID64()
                 reply("Relaying %s...",chat:Name())
                 local randomIntSeed = math.tointeger(userID) & 2^31
                 local ip = randomInt(20,240).."."..randomInt(20,240).."."..randomInt(20,240).."."..randomInt(20,240)
-                sayEx(chatID,user:Nick().." entered chat. (IP: "..ip..")")
+                sayEx(chatID,user:Nick().." entered steamChat. (IP: "..ip..")")
                 relay.Connect(chatID,userID)
             else
                 reply("Cannot find a chatroom with %s in its name.",targetChat)
             end
+            handlers.pop()
         end
     end,"Joins a chatroom with nana as a relay.","[name of chatroom]")
 end)

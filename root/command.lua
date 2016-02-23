@@ -44,7 +44,7 @@ end
 
 hook.Add("steamClient.friendMessageEx","commands",function(steamID,msg)
     if msg:sub(1,1) ~= COMMAND_PREFIX then return end
-    local user = user.GetBySteamID64(steamID)
+    local user = steamUser.GetBySteamID64(steamID)
 
     local cmd,argStr = msg:match("^.(%S+)%s*(.*)")
 
@@ -78,8 +78,8 @@ end)
 
 hook.Add("steamClient.chatMessageEx","commands",function(chatRoomID,steamID,msg)
     if msg:sub(1,1) ~= COMMAND_PREFIX then return end
-    local user = user.GetBySteamID64(steamID)
-    local chatRoom = chat.GetBySteamID64(chatRoomID)
+    local user = steamUser.GetBySteamID64(steamID)
+    local chatRoom = steamChat.GetBySteamID64(chatRoomID)
 
     local cmd,argStr = msg:match("^.(%S+)%s*(.*)")
 

@@ -47,8 +47,11 @@ include("superstring.lua")
 
 include("relay.lua")
 
-include("user.lua")
-include("chats.lua")
+include("steam_user.lua")
+include("steam_chats.lua")
+
+include("discord_user.lua")
+include("discord_chats.lua")
 
 -- include("irc.lua")
 

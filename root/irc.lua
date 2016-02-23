@@ -16,13 +16,13 @@ print("IRC lib initialising...")
 irc_freenode.join("#lua")
 
 hook.Add("irc_freenode.message#lua","relay",function(from,msg,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#lua> "..from..": "..msg)
     end
 end)
 
 hook.Add("irc_freenode.join#lua","relay",function(nick,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         if nick == "nana-bot" then
             chat:Say("<#lua> Connected.")
         else
@@ -32,7 +32,7 @@ hook.Add("irc_freenode.join#lua","relay",function(nick,rawMsg)
 end)
 
 hook.Add("irc_freenode.part#lua","relay",function(nick,reason,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#lua> "..nick.." disconnected ["..reason.." | "..rawMsg.host.."]")
     end
 end)
@@ -49,7 +49,7 @@ hook.Add("irc_freenode.quit","relay",function(nick,reason,channels,rawMsg)
 
     if not ok then return end
 
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#lua> "..nick.." quit ["..reason.." | "..rawMsg.host.."]")
     end
 end)
@@ -59,13 +59,13 @@ end)
 irc_gamesurge.join("#gmod")
 
 hook.Add("irc_gamesurge.message#gmod","relay",function(from,msg,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#gmod> "..from..": "..msg)
     end
 end)
 
 hook.Add("irc_gamesurge.join#gmod","relay",function(nick,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         if nick == "nana-bot" then
             chat:Say("<#gmod> Connected.")
         else
@@ -75,7 +75,7 @@ hook.Add("irc_gamesurge.join#gmod","relay",function(nick,rawMsg)
 end)
 
 hook.Add("irc_gamesurge.part#gmod","relay",function(nick,reason,rawMsg)
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#gmod> "..nick.." disconnected ["..reason.." | "..rawMsg.host.."]")
     end
 end)
@@ -92,7 +92,7 @@ hook.Add("irc_gamesurge.quit","relay",function(nick,reason,channels,rawMsg)
 
     if not ok then return end
 
-    for _,chat in pairs(chat.GetAll()) do
+    for _,chat in pairs(steamChat.GetAll()) do
         chat:Say("<#gmod> "..nick.." quit ["..reason.." | "..rawMsg.host.."]")
     end
 end)

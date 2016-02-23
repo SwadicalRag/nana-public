@@ -15,14 +15,14 @@ hook.Add ("ChatMessage", "sed",
 				local message = sed.messages:get (-i)
 				if not message then break end
 
-                if chatRoom == message.chatRoom then
-    				if string.find (message.message, a) then
-    					local newMessage = string.gsub (message.message, a, b)
-    					chatRoom:Say (message.user:Nick() .. ": " .. newMessage)
-    					sed.messages:add ({ chatRoom = message.chatRoom, user = message.user, message = newMessage })
-    					break
-    				end
-                end
+				if chatRoom == message.chatRoom then
+					if string.find (message.message, a) then
+						local newMessage = string.gsub (message.message, a, b)
+						chatRoom:Say (message.user:Nick() .. ": " .. newMessage)
+						sed.messages:add ({ chatRoom = message.chatRoom, user = message.user, message = newMessage })
+						break
+					end
+				end
 			end
 		else
 			sed.messages:add ({ chatRoom = chatRoom, user = user, message = message })

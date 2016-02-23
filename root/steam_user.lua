@@ -1,16 +1,16 @@
-user = {}
-sandbox.env.user = user
+steamUser = {}
+sandbox.env.steamUser = steamUser
 
-local users = {}
-local userObjectCache = {}
+local steamUsers = {}
+local steamUserObjectCache = {}
 
 local function getServerIP(data)
     local hostip = data.game_server_ip
     local ip = {}
-    ip[1] = bit.rshift(bit.band(hostip,0xFF000000),24)
-    ip[2] = bit.rshift(bit.band(hostip,0x00FF0000),16)
-    ip[3] = bit.rshift(bit.band(hostip,0x0000FF00),8)
-    ip[4] = bit.band(hostip,0x000000FF)
+    ip[1] = ((hostip & 0xFF000000) >> 24)
+    ip[2] = ((hostip & 0x00FF0000)  >> 16)
+    ip[3] = ((hostip & 0x0000FF00) >> 8)
+    ip[4] = (hostip & 0x000000FF)
 
     return table.concat(ip,".")..":"..data.game_server_port
 end
@@ -22,28 +22,36 @@ local function NewUser(steamID64)
     User.steamID64 = steamID64
 
     function User:Nick()
-        return users[steamID64].player_name or false
+        return steamUsers[steamID64].player_name or false
+    end
+
+    function User:IsSteam()
+        return true
+    end
+
+    function User:IsDiscord()
+        return false
     end
 
     function User:LastLoggedOn()
-        return users[steamID64].last_logon or false
+        return steamUsers[steamID64].last_logon or false
     end
 
     function User:LastLoggedOff()
-        return users[steamID64].last_logoff or false
+        return steamUsers[steamID64].last_logoff or false
     end
 
     function User:GetStatus()
-        return nameFromEnum("EPersonaState",users[steamID64].persona_state)
+        return nameFromEnum("EPersonaState",steamUsers[steamID64].persona_state)
     end
 
     function User:IsPlayingGame()
-        return users[steamID64].game_name ~= ""
+        return steamUsers[steamID64].game_name ~= ""
     end
 
     function User:GetGameName()
         if not self:IsPlayingGame() then return false end
-        return users[steamID64].game_name
+        return steamUsers[steamID64].game_name
     end
 
     function User:SteamID()
@@ -57,7 +65,7 @@ local function NewUser(steamID64)
     end
 
     function User:GetIP()
-        return getServerIP(users[steamID64])
+        return getServerIP(steamUsers[steamID64])
     end
 
     function UserMeta:__eq(sec)
@@ -65,67 +73,78 @@ local function NewUser(steamID64)
     end
 
     function UserMeta:__tostring()
-        return "User ["..self:Nick().."]"
+        return "Steam User ["..self:Nick().."]"
     end
 
     return (sandbox.object:protect(User))
 end
 
-function user.GetBySteamID64(steamID)
+function steamUser.GetBySteamID(steamID)
     local steamID64 = SteamID(steamID):ID64()
-    if not users[steamID64] then
-        local userData = steamClient.getUserInfo(steamID64)
-        if not userData then return false end
+    if not steamUsers[steamID64] then
+        local steamUserData = steamClient.getUserInfo(steamID64)
+        if not steamUserData then return false end
 
-        users[steamID64] = userData
+        steamUsers[steamID64] = steamUserData
     end
 
-    if not userObjectCache[steamID64] then
-        userObjectCache[steamID64] = NewUser(steamID64)
+    if not steamUserObjectCache[steamID64] then
+        steamUserObjectCache[steamID64] = NewUser(steamID64)
     end
 
-    return userObjectCache[steamID64]
+    return steamUserObjectCache[steamID64]
 end
+-- compatibility
+steamUser.GetBySteamID64 = steamUser.GetBySteamID
 
 local function refreshInternalDatabase()
-    local _users = steamClient.getAllUserInfo()
-    for k,v in pairs(_users) do
-        users[k] = v
+    local _steamUsers = steamClient.getAllUserInfo()
+    for k,v in pairs(_steamUsers) do
+        steamUsers[k] = v
     end
 end
 
-function user.GetByName(search)
+function steamUser.GetByName(search)
     -- refreshInternalDatabase() -- to cache everyone that's nearby
     -- no need for ^ now
 
-    for id,userData in pairs(users) do
-        if userData.player_name:match(search) then
-            return user.GetBySteamID64(id)
+    for id,steamUserData in pairs(steamUsers) do
+        if steamUserData.player_name:lower():match(search:lower()) then
+            return steamUser.GetBySteamID64(id)
         end
     end
 end
 
-function user.GetAudience()
+function steamUser.GetAudience()
+    assert(sandbox:GetHandler() == "steam","Steam-only!")
     local chatRoom = steamClient.getChatInfo(sandbox:GetTargetAudience())
     local audience = {}
     if chatRoom then
         for steamid64,_ in pairs(chatRoom.members) do
-            audience[#audience + 1] = user.GetBySteamID64(steamid64)
+            audience[#audience + 1] = steamUser.GetBySteamID64(steamid64)
         end
     else
-        audience = {user.GetBySteamID64(sandbox:GetTargetAudience())}
+        audience = {steamUser.GetBySteamID64(sandbox:GetTargetAudience())}
     end
     return audience
 end
 
+function steamUser.GetAll()
+    local out = {}
+    for id,_ in pairs(steamUsers) do
+        out[#out+1] = steamUser.GetBySteamID(id)
+    end
+    return out
+end
+
 hook.Add("steamClient.user","update",function(steamID64,newUserData)
-    local user = user.GetBySteamID64(steamID64)
-    local oldUserData = users[steamID64]
+    local steamUser = steamUser.GetBySteamID64(steamID64)
+    local oldUserData = steamUsers[steamID64]
 
     if oldUserData.persona_state ~= newUserData.persona_state then
         sandbox:CallHook(
             "UserStatusChanged",
-            user,
+            steamUser,
             nameFromEnum("EPersonaState",oldUserData.persona_state),
             nameFromEnum("EPersonaState",newUserData.persona_state)
         )
@@ -134,7 +153,7 @@ hook.Add("steamClient.user","update",function(steamID64,newUserData)
     if oldUserData.game_name ~= newUserData.game_name then
         sandbox:CallHook(
             "UserPlayingGame",
-            user,
+            steamUser,
             oldUserData.game_name,
             newUserData.game_name
         )
@@ -143,11 +162,11 @@ hook.Add("steamClient.user","update",function(steamID64,newUserData)
     if getServerIP(oldUserData) ~= getServerIP(newUserData) then
         sandbox:CallHook(
             "UserJoinedServer",
-            user,
+            steamUser,
             getServerIP(oldUserData),
             getServerIP(newUserData)
         )
     end
 
-    users[steamID64] = newUserData
+    steamUsers[steamID64] = newUserData
 end)
