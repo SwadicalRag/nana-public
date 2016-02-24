@@ -6,21 +6,20 @@ V 1.0.0
 
 ]]
 
-local targetSteamChat = "Garry's Mod Lua"
-local targetDiscordChannel = "steam"
-local targetDiscordServer = "Garry's Mod"
+local targetSteamChat = "103582791439031144"
+local targetDiscordChannel = "152162730244177920"
 
 hook.Add("ChatMessage","relay",function(channel,user,msg)
     if channel:IsDiscord() then
-        if (channel:Name() == targetDiscordChannel) and (channel:ServerName() == targetDiscordServer) then
-            local targetChat = steamChat.GetByName(targetSteamChat)
+        if channel.id == targetDiscordChannel then
+            local targetChat = steamChat.GetBySteamID(targetSteamChat)
             if targetChat then
                 targetChat:Say(user:Nick()..": "..msg)
             end
         end
     elseif channel:IsSteam() then
-        if channel:Name() == targetSteamChat then
-            local targetChat = discordChannel.GetByName(targetDiscordChannel,targetDiscordServer)
+        if channel:SteamID():ID64() == targetSteamChat then
+            local targetChat = discordChannel.GetByID(targetDiscordChannel)
             if targetChat then
                 targetChat:Say(user:Nick()..": "..msg)
             end
