@@ -11,4 +11,4 @@ require("imagereply")
 require("thanks")
 require("morse")
 
-require("garry")
+require("d_s_relay")
