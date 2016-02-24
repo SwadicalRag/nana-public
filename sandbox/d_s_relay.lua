@@ -21,6 +21,10 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
         if channel:SteamID():ID64() == targetSteamChat then
             local targetChat = discordChannel.GetByID(targetDiscordChannel)
             if targetChat then
+                msg = msg:gsub("@(%S+)",function(nick)
+                    local user = discordUser.FindByName(nick)
+                    if user then return "<@"..user.id..">" else return "@"..nick end
+                end)
                 targetChat:Say(user:Nick()..": "..msg)
             end
         end
