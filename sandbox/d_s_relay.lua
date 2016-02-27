@@ -30,3 +30,17 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
         end
     end
 end)
+
+INLINE_EXTERNAL_UNSANDBOXED(function()
+    hook.Add("OnMessageDispatch","d_s_relay",function(id,msg)
+        if id == targetSteamChat then
+            handlers.push("discord")
+            sayEx(targetDiscordChannel,msg)
+            handlers.pop()
+        elseif id == targetDiscordChannel then
+            handlers.push("steam")
+            sayEx(targetSteamChat,msg)
+            handlers.pop()
+        end
+    end)
+end)
