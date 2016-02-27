@@ -37,19 +37,19 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
     end
 end)
 
-INLINE_EXTERNAL_UNSANDBOXED(function()
-    hook.Add("OnMessageDispatch","d_s_relay",function(id,msg)
-        if out[msg] then out[msg] = nil return end
-        if id == targetSteamChat then
-            handlers.push("discord")
-            sayEx(targetDiscordChannel,msg)
-            out[msg] = true
-            handlers.pop()
-        elseif id == targetDiscordChannel then
-            handlers.push("steam")
-            sayEx(targetSteamChat,msg)
-            out[msg] = true
-            handlers.pop()
-        end
-    end)
-end)
+-- INLINE_EXTERNAL_UNSANDBOXED(function()
+--     hook.Add("OnMessageDispatch","d_s_relay",function(id,msg)
+--         if out[msg] then out[msg] = nil return end
+--         if id == targetSteamChat then
+--             handlers.push("discord")
+--             sayEx(targetDiscordChannel,msg)
+--             out[msg] = true
+--             handlers.pop()
+--         elseif id == targetDiscordChannel then
+--             handlers.push("steam")
+--             sayEx(targetSteamChat,msg)
+--             out[msg] = true
+--             handlers.pop()
+--         end
+--     end)
+-- end)
