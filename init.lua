@@ -64,6 +64,8 @@ include("commands/restart.lua")
 include("commands/leave.lua")
 include("commands/help.lua")
 
+include("discord_music.lua")
+
 include("hooks.lua")
 include("markov_exp.lua")
 

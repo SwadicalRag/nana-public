@@ -2,7 +2,7 @@ hook.Add("discord.userStatusChanged","greet",function(id,oldStatus,newStatus)
     timer.Simple(1,function()
         if not CookieLib:GetInternalPrivate(id).greeted then
             if newStatus == "online" then
-                discordChannel.GetByName("general"):Say(sandbox.env.GetHelpMessage(id))
+                discord.replyPersonal(id,sandbox.env.GetHelpMessage(id))
                 CookieLib:GetInternalPrivate(id).greeted = true
                 CookieLib:Save()
             end
@@ -22,4 +22,8 @@ function sandbox.env.GetHelpMessage(id)
         "This message is only printed once.",
         user.id
     )
+end
+
+function sandbox.env.SetJoinStatus(status)
+    CookieLib:GetInternalPrivate(Me.id).greeted = status
 end
