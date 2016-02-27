@@ -9,12 +9,16 @@ V 1.0.0
 local targetSteamChat = "103582791439031144"
 local targetDiscordChannel = "152162730244177920"
 
+local out = {}
+
 hook.Add("ChatMessage","relay",function(channel,user,msg)
     if channel:IsDiscord() then
         if channel.id == targetDiscordChannel then
             local targetChat = steamChat.GetBySteamID(targetSteamChat)
             if targetChat then
-                targetChat:Say(user:Nick()..": "..msg)
+                local sentMsg = user:Nick()..": "..msg
+                out[sentMsg] = true
+                targetChat:Say(sentMsg)
             end
         end
     elseif channel:IsSteam() then
@@ -25,7 +29,9 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
                     local user = discordUser.GetByName(nick)
                     if user then return "<@"..user.id..">" else return "@"..nick end
                 end)
-                targetChat:Say(user:Nick()..": "..msg)
+                local sentMsg = user:Nick()..": "..msg
+                out[sentMsg] = true
+                targetChat:Say(sentMsg)
             end
         end
     end
@@ -33,6 +39,7 @@ end)
 
 INLINE_EXTERNAL_UNSANDBOXED(function()
     hook.Add("OnMessageDispatch","d_s_relay",function(id,msg)
+        if out[msg] then out[msg] = nil return end
         if id == targetSteamChat then
             handlers.push("discord")
             sayEx(targetDiscordChannel,msg)
