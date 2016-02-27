@@ -43,10 +43,12 @@ INLINE_EXTERNAL_UNSANDBOXED(function()
         if id == targetSteamChat then
             handlers.push("discord")
             sayEx(targetDiscordChannel,msg)
+            out[msg] = true
             handlers.pop()
         elseif id == targetDiscordChannel then
             handlers.push("steam")
             sayEx(targetSteamChat,msg)
+            out[msg] = true
             handlers.pop()
         end
     end)
