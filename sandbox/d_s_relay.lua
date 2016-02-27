@@ -17,7 +17,7 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
             local targetChat = steamChat.GetBySteamID(targetSteamChat)
             if targetChat then
                 local sentMsg = user:Nick()..": "..msg
-                out[sentMsg] = true
+                -- out[sentMsg] = true
                 targetChat:Say(sentMsg)
             end
         end
@@ -30,7 +30,7 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
                     if user then return "<@"..user.id..">" else return "@"..nick end
                 end)
                 local sentMsg = user:Nick()..": "..msg
-                out[sentMsg] = true
+                -- out[sentMsg] = true
                 targetChat:Say(sentMsg)
             end
         end
