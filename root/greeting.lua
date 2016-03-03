@@ -25,5 +25,5 @@ function sandbox.env.GetHelpMessage(id)
 end
 
 function sandbox.env.SetJoinStatus(status)
-    CookieLib:GetInternalPrivate(Me.id).greeted = status
+    CookieLib:GetInternalPrivate(sandbox:GetCurrentOwner()).greeted = status
 end
