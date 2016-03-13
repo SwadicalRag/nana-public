@@ -11,13 +11,6 @@ local targetDiscordChannel = "152162730244177920"
 
 local LOCK = false
 
-local function sayRaw(tgt,msg)
-    if type(tgt) == "table" then tgt = tgt.id end
-    INLINE_EXTERNAL_UNSANDBOXED(function()
-        sayRaw(tgt,msg)
-    end)
-end
-
 hook.Add("ChatMessage","relay",function(channel,user,msg)
     if LOCK then return end
     if channel:IsDiscord() then
@@ -30,7 +23,7 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
                 end)
                 local sentMsg = user:Nick()..": "..msg
                 LOCK = true
-                sayRaw(targetChat,sentMsg)
+                targetChat:Say(sentMsg)
                 LOCK = false
             end
         end
@@ -44,7 +37,7 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
                 end)
                 local sentMsg = user:Nick()..": "..msg
                 LOCK = true
-                sayRaw(targetChat,sentMsg)
+                targetChat:Say(sentMsg)
                 LOCK = false
             end
         end
@@ -57,13 +50,13 @@ INLINE_EXTERNAL_UNSANDBOXED(function()
         if id == targetSteamChat then
             handlers.push("discord")
             LOCK = true
-            sayRaw(targetDiscordChannel,msg)
+            sayEx(targetDiscordChannel,msg)
             LOCK = false
             handlers.pop()
         elseif id == targetDiscordChannel then
             handlers.push("steam")
             LOCK = true
-            sayRaw(targetSteamChat,msg)
+            sayEx(targetSteamChat,msg)
             LOCK = false
             handlers.pop()
         end
@@ -76,7 +69,7 @@ INLINE_EXTERNAL_UNSANDBOXED(function()
         if (chatRoom == targetSteamChat) and IsBlacklisted(steamID) then
             handlers.push("discord")
             LOCK = true
-            sayRaw(targetDiscordChannel,steamUser.GetBySteamID(steamID):Nick()..": "..msg)
+            sayEx(targetDiscordChannel,steamUser.GetBySteamID(steamID):Nick()..": "..msg)
             LOCK = false
             handlers.pop()
         end
