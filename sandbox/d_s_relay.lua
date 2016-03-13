@@ -12,6 +12,7 @@ local targetDiscordChannel = "152162730244177920"
 local LOCK = false
 
 hook.Add("ChatMessage","relay",function(channel,user,msg)
+    if LOCK then return end
     if channel:IsDiscord() then
         if channel.id == targetDiscordChannel then
             local targetChat = steamChat.GetBySteamID(targetSteamChat)
@@ -64,6 +65,7 @@ end)
 
 INLINE_EXTERNAL_UNSANDBOXED(function()
     hook.Add("steamClient.chatMessage","blacklist_relay",function(chatRoom,steamID,msg)
+        if LOCK then return end
         if (chatRoom == targetSteamChat) and IsBlacklisted(steamID) then
             handlers.push("discord")
             LOCK = true
