@@ -3,6 +3,7 @@
 -- (modified to be nana compatible)
 
 local CircularBuffer = require ("circularbuffer")
+local RELAY_EQUALITY = RELAY_EQUALITY
 
 local sed = {}
 sed.messages = CircularBuffer (20)
@@ -15,7 +16,7 @@ hook.Add ("ChatMessage", "sed",
 				local message = sed.messages:get (-i)
 				if not message then break end
 
-				if chatRoom == message.chatRoom then
+				if chatRoom == message.chatRoom or (RELAY_EQUALITY(chatRoom,message.chatRoom)) then
 					if string.find (message.message, a) then
 						local newMessage = string.gsub (message.message, a, b)
 						chatRoom:Say (message.user:Nick() .. ": " .. newMessage)

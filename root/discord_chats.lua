@@ -57,7 +57,12 @@ local function NewChannel(id)
     end
 
     function Channel:GetInvite()
-        local invite = discord.createInvite(id)
+        local invite = discord.createInvite({
+            server = id,
+            type = "text",
+            name = "nana invites u! XD"
+        })
+
         if invite then
             return invite.code,string.format("This invite will last for %d seconds",invite.maxAge)
         else

@@ -6,10 +6,23 @@ V 1.0.0
 
 ]]
 
-local targetSteamChat = "103582791439031144"
+-- local targetSteamChat = "103582791439031144" -- new glua
+local targetSteamChat = "103582791436028776" -- old glua
 local targetDiscordChannel = "152162730244177920"
 
 local out = {}
+
+local function LOCK()
+    INLINE_EXTERNAL_UNSANDBOXED(function()
+        TEXT_ECHO_LOCK = true
+    end)
+end
+
+local function UNLOCK()
+    INLINE_EXTERNAL_UNSANDBOXED(function()
+        TEXT_ECHO_LOCK = false
+    end)
+end
 
 hook.Add("ChatMessage","relay",function(channel,user,msg)
     if channel:IsDiscord() then
@@ -18,7 +31,9 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
             if targetChat then
                 local sentMsg = user:Nick()..": "..msg
                 -- out[sentMsg] = true
+                LOCK()
                 targetChat:Say(sentMsg)
+                UNLOCK()
             end
         end
     elseif channel:IsSteam() then
@@ -31,28 +46,40 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
                 end)
                 local sentMsg = user:Nick()..": "..msg
                 -- out[sentMsg] = true
+                LOCK()
                 targetChat:Say(sentMsg)
+                UNLOCK()
             end
         end
     end
 end)
 
--- INLINE_EXTERNAL_UNSANDBOXED(function()
---     hook.Add("OnMessageDispatch","d_s_relay",function(id,msg)
---         if out[msg] then out[msg] = nil return end
---         if id == targetSteamChat then
---             handlers.push("discord")
---             sayEx(targetDiscordChannel,msg)
---             out[msg] = true
---             handlers.pop()
---         elseif id == targetDiscordChannel then
---             handlers.push("steam")
---             sayEx(targetSteamChat,msg)
---             out[msg] = true
---             handlers.pop()
---         end
---     end)
--- end)
+function RELAY_EQUALITY(c1,c2)
+    if (c1.id == targetSteamChat) or (c1.id == targetDiscordChannel)
+    and (c2.id == targetSteamChat) or (c2.id == targetDiscordChannel) then
+        return true
+    else
+        return false
+    end
+end
+
+INLINE_EXTERNAL_UNSANDBOXED(function()
+    hook.Add("InternalText","d_s_relay",function(id,msg)
+        timer.Simple(0.1,function()
+            LOCK()
+            if id == targetSteamChat then
+                handlers.push("discord")
+                sayEx(targetDiscordChannel,msg)
+                handlers.pop()
+            elseif id == targetDiscordChannel then
+                handlers.push("steam")
+                sayEx(targetSteamChat,msg)
+                handlers.pop()
+            end
+            UNLOCK()
+        end)
+    end)
+end)
 
 INLINE_EXTERNAL_UNSANDBOXED(function()
     hook.Add("steamClient.chatMessage","blacklist_relay",function(chatRoom,steamID,msg)

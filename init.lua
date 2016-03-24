@@ -69,6 +69,9 @@ include("discord_music.lua")
 include("hooks.lua")
 include("markov_exp.lua")
 
+include("textrender.lua")
+include("render_chan.lua")
+
 local function restoreSandbox()
     includeSandbox("init.lua")
 end

@@ -1,11 +1,14 @@
-hook.Add("discord.userStatusChanged","greet",function(id,oldStatus,newStatus)
+if true then return end
+
+hook.Add("discord.presence","greet",function(user,id,status,gameName)
     timer.Simple(1,function()
         if not CookieLib:GetInternalPrivate(id).greeted then
-            if newStatus == "online" then
-                discord.replyPersonal(id,sandbox.env.GetHelpMessage(id))
-                CookieLib:GetInternalPrivate(id).greeted = true
-                CookieLib:Save()
-            end
+            discord.sendMessage({
+                to = id,
+                messsage = sandbox.env.GetHelpMessage(id)
+            })
+            CookieLib:GetInternalPrivate(id).greeted = true
+            CookieLib:Save()
         end
     end)
 end)
