@@ -29,6 +29,10 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
         if channel.id == targetDiscordChannel then
             local targetChat = steamChat.GetBySteamID(targetSteamChat)
             if targetChat then
+                msg = msg:gsub("<@(%d+)>",function(id)
+                    local user = discordUser.GetByID(id)
+                    if user then return user:Nick() else return "<@"..id..">" end
+                end)
                 local sentMsg = user:Nick()..": "..msg
                 -- out[sentMsg] = true
                 LOCK()
