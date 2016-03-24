@@ -31,7 +31,7 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
             if targetChat then
                 msg = msg:gsub("<@(%d+)>",function(id)
                     local user = discordUser.GetByID(id)
-                    if user then return user:Nick() else return "<@"..id..">" end
+                    if user then return "@"..user:Nick() else return "<@"..id..">" end
                 end)
                 local sentMsg = user:Nick()..": "..msg
                 -- out[sentMsg] = true
