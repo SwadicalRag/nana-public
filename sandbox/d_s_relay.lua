@@ -6,8 +6,8 @@ V 1.0.0
 
 ]]
 
--- local targetSteamChat = "103582791439031144" -- new glua
-local targetSteamChat = "103582791436028776" -- old glua
+local targetSteamChat = "103582791439031144" -- new glua
+-- local targetSteamChat = "103582791436028776" -- old glua
 local targetDiscordChannel = "152162730244177920"
 
 local out = {}
