@@ -88,10 +88,13 @@ end)
 INLINE_EXTERNAL_UNSANDBOXED(function()
     hook.Add("steamClient.chatMessage","blacklist_relay",function(chatRoom,steamID,msg)
         if (chatRoom == targetSteamChat) and IsBlacklisted(steamID) then
+            local user = steamUser.GetBySteamID(steamID)
+            LOCK()
             handlers.push("discord")
-            sayEx(targetDiscordChannel,steamUser.GetBySteamID(steamID):Nick()..": "..msg)
+            sayEx(targetDiscordChannel,user:Nick()..": "..msg)
             -- out[msg] = true
             handlers.pop()
+            UNLOCK()
         end
     end)
 end)
