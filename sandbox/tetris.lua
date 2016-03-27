@@ -1,3 +1,4 @@
+local PrintInternal = PrintInternal
 local Tetris = {}
 
 Tetris.blocks = {}
@@ -30,6 +31,8 @@ function Tetris:DrawBlock(screen,block,x,y)
 end
 
 function Tetris:AddBlock(block,x,y)
+    PrintInternal("ADD BLOCK "..block)
+
     self.data[#self.data + 1] {
         x = x,
         y = y,
@@ -45,7 +48,8 @@ end
 
 function Tetris:DrawBoard(screen)
     for i=1,#self.data do
-        self:DrawBlock(screen,screen[i].block,screen[i].x,screen[i].y)
+        PrintInternal("DRAW BLOCK "..self.data[i].block)
+        self:DrawBlock(screen,self.data[i].block,self.data[i].x,self.data[i].y)
     end
 end
 
@@ -90,5 +94,6 @@ Tetris:RegisterBlock("L-1",{
 })
 
 hook.Add("Render","Tetris",function(screen)
+    PrintInternal("TICK")
     Tetris:Tick(screen)
 end)
