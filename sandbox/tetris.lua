@@ -76,7 +76,7 @@ function Tetris:CommitBlockToScreen(block)
     end)
 end
 
-function Tetris:DrawScreen()
+function Tetris:DrawScreen(screen)
     for x,x_data in pairs(self.screenData) do
         for y,status in pairs(x_data) do
             if status then
@@ -202,7 +202,7 @@ function Tetris:Tick(screen,render,spawn_block_anyway)
     end
 
     if render then
-        self:DrawScreen()
+        self:DrawScreen(screen)
         self:DrawBoard(screen)
     end
 end
