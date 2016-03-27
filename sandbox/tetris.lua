@@ -300,7 +300,7 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                 end
 
                 Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
-            elseif msg == "s" then
+            elseif msg == "w" then
                 local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
 
                 ang = tonumber(ang) + 90
@@ -326,7 +326,7 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                         return true
                     end
                 end)
-            elseif msg == "w" then
+            elseif msg == "s" then
                 Tetris:Tick(Tetris.Screen,false)
             end
 
