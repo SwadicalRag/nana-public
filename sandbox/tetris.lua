@@ -78,9 +78,9 @@ function Tetris:DrawBoard(screen)
     end
 end
 
-function Tetris:CheckCollision(block1,block2,y_offset_block1)
+function Tetris:CheckCollision(block1,block2,x_offset_block1,y_offset_block1)
     local hit = false
-    self:IteratePixels(block1.block,block1.x,block1.y + y_offset_block1,function(x1,y1)
+    self:IteratePixels(block1.block,block1.x + x_offset_block1,block1.y + y_offset_block1,function(x1,y1)
         return self:IteratePixels(block2.block,block2.x,block2.y,function(x2,y2)
             if x1 == x2 and y1 == y2 then
                 hit = true
@@ -95,7 +95,7 @@ end
 function Tetris:Tick(screen)
     if self.ActiveBlock then
         for i=1,#self.data do
-            if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1) then
+            if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],0,1) then
                 PrintInternal("HIT ACTIVE BLOCK")
                 self.ActiveBlock = nil
                 break
@@ -219,9 +219,21 @@ local chan_id = "162428115778404352"
 hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
     if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
         if msg == ">" then
+            for i=1,#self.data do
+                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+                    return
+                end
+            end
+
             local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
         elseif msg == "<" then
+            for i=1,#self.data do
+                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+                    return
+                end
+            end
+
             local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
         elseif msg == "R" then
@@ -231,6 +243,15 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
             if ang == 360 then ang = 0 end
 
             Tetris.ActiveBlock.block = blockType..ang
+
+            for i=1,#self.data do
+                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+                    ang = ang - 90
+                    if ang == -90 then ang = 270 end
+                    Tetris.ActiveBlock.block = blockType..ang
+                    return
+                end
+            end
         end
     end
 end)
