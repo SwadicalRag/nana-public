@@ -139,8 +139,8 @@ function Tetris:CollisionTestActiveBlock(only_other_blocks)
     return hit
 end
 
-function Tetris:Tick(screen,render)
-    if self.GameOver then return end
+function Tetris:Tick(screen,render,spawn_block_anyway)
+    if self.GameOver then return self:DrawBoard(screen) end
 
     if self.ActiveBlock then
         for i=1,#self.blockData do
@@ -165,7 +165,7 @@ function Tetris:Tick(screen,render)
                 end
             end)
         end
-    elseif render then
+    elseif render or spawn_block_anyway then
         -- no new blocks while 'skipping' frames
         self.ActiveBlock = self:AddRandomBlock(screen)
 
@@ -189,11 +189,12 @@ function Tetris:Tick(screen,render)
             self.score = self.score + 1
 
             for _x=1,screen.w do
-                local ok = true
                 for _y=y,screen.h do
-                    if self.screenData[_x] and self.screenData[_x][_y] and ((_y - 1) > 0)then
+                    if self.screenData[_x] and self.screenData[_x][_y] then
                         self.screenData[_x][_y] = nil
-                        self.screenData[_x][_y - 1] = true
+                        if (_y - 1) >= 1 then
+                            self.screenData[_x][_y - 1] = true
+                        end
                     end
                 end
             end
@@ -403,6 +404,8 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                 end
             elseif msg == "s" then
                 Tetris:Tick(Tetris.Screen,false)
+            elseif msg == "x" then
+                Tetris:Tick(Tetris.Screen,false,true)
             end
 
             ::next_one::
