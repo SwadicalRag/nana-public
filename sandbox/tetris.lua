@@ -219,8 +219,8 @@ local chan_id = "162428115778404352"
 hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
     if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
         if msg == ">" then
-            for i=1,#self.data do
-                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+            for i=1,#Tetris.data do
+                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
                     return
                 end
             end
@@ -228,8 +228,8 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
             local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
         elseif msg == "<" then
-            for i=1,#self.data do
-                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+            for i=1,#Tetris.data do
+                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
                     return
                 end
             end
@@ -244,8 +244,8 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
 
             Tetris.ActiveBlock.block = blockType..ang
 
-            for i=1,#self.data do
-                if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1,0) then
+            for i=1,#Tetris.data do
+                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
                     ang = ang - 90
                     if ang == -90 then ang = 270 end
                     Tetris.ActiveBlock.block = blockType..ang
