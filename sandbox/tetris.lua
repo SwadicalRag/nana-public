@@ -49,7 +49,7 @@ function Tetris:DrawBoard(screen)
     end
 end
 
-function self:CheckCollision(block1,block2,y_offset_block1)
+function Tetris:CheckCollision(block1,block2,y_offset_block1)
     local hit = false
     self:IteratePixels(block1.block,block1.x,block1.y + y_offset_block1,function(x1,y1)
         return self:IteratePixels(block2.block,block2.x,block2.y,function(x2,y2)
