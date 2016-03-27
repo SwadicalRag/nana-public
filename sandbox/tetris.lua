@@ -219,10 +219,10 @@ local chan_id = "162428115778404352"
 hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
     if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
         if msg == ">" then
-            local w,h = Tetris:BlockSize(Tetris.ActiveBlock)
+            local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
         elseif msg == "<" then
-            local w,h = Tetris:BlockSize(Tetris.ActiveBlock)
+            local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
         elseif msg == "R" then
             local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
