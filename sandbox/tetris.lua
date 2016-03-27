@@ -118,6 +118,8 @@ function Tetris:CheckCollision(block1,block2,x_offset_block1,y_offset_block1)
 end
 
 function Tetris:CollisionTestActiveBlock(only_other_blocks)
+    if not self.ActiveBlock then return false end
+
     for i=1,#self.blockData do
         if (self.blockData[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.blockData[i],1,0) then
             return true
@@ -196,9 +198,9 @@ function Tetris:Tick(screen,render,spawn_block_anyway)
     end
 
     if self.GameOver then
-        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick.."\nGAME OVER.")
+        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick.."\nGAME OVER."..self.Controls)
     else
-        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick)
+        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick..self.Controls)
     end
 
     if render then
@@ -214,7 +216,7 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
         for i=1,#_msg do
             msg = _msg:sub(i,i):lower()
 
-            if msg == "d" then
+            if (msg == "d") and Tetris.ActiveBlock then
                 local orig_x = Tetris.ActiveBlock.x
 
                 local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
@@ -223,7 +225,7 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                 if Tetris:CollisionTestActiveBlock() then
                     Tetris.ActiveBlock.x = orig_x
                 end
-            elseif msg == "a" then
+            elseif (msg == "a") and Tetris.ActiveBlock then
                 local orig_x = Tetris.ActiveBlock.x
 
                 Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
@@ -231,7 +233,7 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                 if Tetris:CollisionTestActiveBlock() then
                     Tetris.ActiveBlock.x = orig_x
                 end
-            elseif msg == "w" then
+            elseif (msg == "w") and Tetris.ActiveBlock then
                 local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
 
                 ang = tonumber(ang) + 90
@@ -410,6 +412,17 @@ Tetris:RegisterBlock("Z-2-270",{
 })
 
 Tetris:Reset()
+
+Tetris.Controls = [[
+Controls:
+W = Rotate 90o clockwise
+A = Move block 1 unit left
+S = Skip 1 frame without creating new blocks
+D = Move block 1 unit right
+
+X = Skip 1 frame and also create new blocks
+C = Restart round
+]]
 
 hook.Add("Render","Tetris",function(screen)
     PrintInternal("TICK")
