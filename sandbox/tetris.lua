@@ -195,10 +195,7 @@ Tetris:RegisterBlock("Rect-0",{
 })
 
 Tetris:RegisterBlock("Rect-90",{
-    {X},
-    {X},
-    {X},
-    {X}
+    {X,X,X,X}
 })
 
 Tetris:RegisterBlock("Rect-180",{
@@ -209,10 +206,7 @@ Tetris:RegisterBlock("Rect-180",{
 })
 
 Tetris:RegisterBlock("Rect-270",{
-    {X},
-    {X},
-    {X},
-    {X}
+    {X,X,X,X}
 })
 
 local chan_id = "162428115778404352"
