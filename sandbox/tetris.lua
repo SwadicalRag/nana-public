@@ -160,6 +160,7 @@ function Tetris:Tick(screen,render,spawn_block_anyway)
                     self.ActiveBlock.y = self.ActiveBlock.y - 1
                     self:CommitBlockToScreen(self.ActiveBlock)
                     self.ActiveBlock = nil
+                    self.blockData[#self.blockData] = nil
 
                     return true
                 end
@@ -201,12 +202,13 @@ function Tetris:Tick(screen,render,spawn_block_anyway)
         end
     end
 
+    if self.GameOver then
+        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick.."\nGAME OVER.")
+    else
+        screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick)
+    end
+
     if render then
-        if self.GameOver then
-            screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick.."\nGAME OVER.")
-        else
-            screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick)
-        end
         self:DrawBoard(screen)
     end
 end
