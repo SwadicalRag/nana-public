@@ -19,6 +19,7 @@ end
 function Tetris:IteratePixels(block,x,y,callback)
     for y_amt=1,#block do
         for x_amt=1,#block[y_amt] do
+            PrintInternal("ITERATE: "..block[y_amt][x_amt])
             if block[y_amt][x_amt] == X then
                 if callback(x_amt + x - 1,y_amt + y - 1) then return true end
             end
