@@ -414,6 +414,7 @@ Tetris:RegisterBlock("Z-2-270",{
 Tetris:Reset()
 
 Tetris.Controls = [[
+
 Controls:
 W = Rotate 90o clockwise
 A = Move block 1 unit left
