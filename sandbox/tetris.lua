@@ -149,7 +149,7 @@ function Tetris:CollisionTestActiveBlock(only_other_blocks)
 end
 
 function Tetris:Tick(screen,render,spawn_block_anyway)
-    if self.GameOver then return self:DrawBoard(screen) end
+    if self.GameOver then return self:DrawScreen(screen),self:DrawBoard(screen) end
 
     if self.ActiveBlock then
         self.ActiveBlock.y = self.ActiveBlock.y + 1
