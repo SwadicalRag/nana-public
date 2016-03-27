@@ -228,7 +228,6 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
                 end
             end
 
-            local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
             Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
         elseif msg == "R" then
             local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
