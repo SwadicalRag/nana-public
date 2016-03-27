@@ -246,6 +246,16 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
                     return
                 end
             end
+
+            Tetris:IteratePixels(Tetris.ActiveBlock.block,Tetris.ActiveBlock.x,Tetris.ActiveBlock.y,function(x,y)
+                if (y > Tetris.Screen.h) or (x > Tetris.Screen.w) then
+                    ang = ang - 90
+                    if ang == -90 then ang = 270 end
+                    Tetris.ActiveBlock.block = blockType..ang
+
+                    return true
+                end
+            end)
         end
     end
 end)
