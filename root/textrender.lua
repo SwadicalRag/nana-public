@@ -259,6 +259,10 @@ function Renderer:NewContext(w,h)
         end
     end
 
+    function Context:SetDescription(desc)
+        self.desc = desc
+    end
+
     Context:SetupScreen()
     return Context
 end

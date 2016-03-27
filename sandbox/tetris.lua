@@ -12,8 +12,12 @@ function Tetris:RegisterBlock(id,data)
 end
 
 function Tetris:Reset()
-    self.data = {}
+    self.blockData = {}
+    self.screenData = {}
     self.ActiveBlock = nil
+    self.lastPlayedNick = "No one"
+    self.score = 0
+    self.GameOver = false
 end
 
 function Tetris:IteratePixels(block,x,y,callback)
@@ -52,13 +56,34 @@ end
 function Tetris:AddBlock(block,x,y)
     PrintInternal("ADD BLOCK "..block)
 
-    self.data[#self.data + 1] = {
+    self.blockData[#self.blockData + 1] = {
         x = x,
         y = y,
         block = block
     }
 
-    return self.data[#self.data]
+    return self.blockData[#self.blockData]
+end
+
+function Tetris:SetScreenPixel(x,y,status)
+    self.screenData[x] = self.screenData[x] or {}
+    self.screenData[x][y] = status
+end
+
+function Tetris:CommitBlockToScreen(block)
+    self:IteratePixels(block.block,block.x,block.y,function(x,y)
+        self:SetScreenPixel(x,y,true)
+    end)
+end
+
+function Tetris:DrawScreen()
+    for x,x_data in pairs(self.screenData) do
+        for y,status in pairs(x_data) do
+            if status then
+                screen:DrawDot(x,y)
+            end
+        end
+    end
 end
 
 function Tetris:AddRandomBlock(screen)
@@ -72,9 +97,9 @@ function Tetris:AddRandomBlock(screen)
 end
 
 function Tetris:DrawBoard(screen)
-    for i=1,#self.data do
-        PrintInternal("DRAW BLOCK "..self.data[i].block)
-        self:DrawBlock(screen,self.data[i].block,self.data[i].x,self.data[i].y)
+    for i=1,#self.blockData do
+        PrintInternal("DRAW BLOCK "..self.blockData[i].block)
+        self:DrawBlock(screen,self.blockData[i].block,self.blockData[i].x,self.blockData[i].y)
     end
 end
 
@@ -92,11 +117,36 @@ function Tetris:CheckCollision(block1,block2,x_offset_block1,y_offset_block1)
     return hit
 end
 
+function Tetris:CollisionTestActiveBlock(only_other_blocks)
+    for i=1,#self.blockData do
+        if (self.blockData[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.blockData[i],1,0) then
+            return true
+        end
+    end
+
+    if only_other_blocks then return false end
+    if not self.Screen then return false end
+
+    local hit = false
+
+    self:IteratePixels(self.ActiveBlock.block,self.ActiveBlock.x,self.ActiveBlock.y,function(x,y)
+        if (y > self.Screen.h) or (x > self.Screen.w) then
+            hit = true
+            return true
+        end
+    end)
+
+    return hit
+end
+
 function Tetris:Tick(screen,render)
+    if self.GameOver then return end
+
     if self.ActiveBlock then
-        for i=1,#self.data do
-            if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],0,1) then
+        for i=1,#self.blockData do
+            if (self.blockData[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.blockData[i],0,1) then
                 PrintInternal("HIT ACTIVE BLOCK")
+                self:CommitBlockToScreen(self.ActiveBlock)
                 self.ActiveBlock = nil
                 break
             end
@@ -108,17 +158,54 @@ function Tetris:Tick(screen,render)
             self:IteratePixels(self.ActiveBlock.block,self.ActiveBlock.x,self.ActiveBlock.y,function(x,y)
                 if y > screen.h then
                     self.ActiveBlock.y = self.ActiveBlock.y - 1
+                    self:CommitBlockToScreen(self.ActiveBlock)
                     self.ActiveBlock = nil
 
                     return true
                 end
             end)
         end
-    else
+    elseif render then
+        -- no new blocks while 'skipping' frames
         self.ActiveBlock = self:AddRandomBlock(screen)
+
+        if self:CollisionTestActiveBlock() then
+            -- GAME OVER
+            self.GameOver = true
+        end
+    end
+
+    -- ROW CLEARING
+    for y=1,screen.h do
+        local ok = true
+        for x=1,screen.w do
+            if not (self.screenData[x] and self.screenData[x][y]) then
+                ok = false
+                break
+            end
+        end
+
+        if ok then
+            self.score = self.score + 1
+
+            for _x=1,screen.w do
+                local ok = true
+                for _y=y,screen.h do
+                    if self.screenData[_x] and self.screenData[_x][_y] and ((_y - 1) > 0)then
+                        self.screenData[_x][_y] = nil
+                        self.screenData[_x][_y - 1] = true
+                    end
+                end
+            end
+        end
     end
 
     if render then
+        if self.GameOver then
+            screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick.."\nGAME OVER.")
+        else
+            screen:SetDescription("BANANA TETRIS\tROWS CLEARED: "..self.score.."\tLAST PLAYED: "..self.lastPlayedNick)
+        end
         self:DrawBoard(screen)
     end
 end
@@ -280,12 +367,13 @@ Tetris:RegisterBlock("Z-2-270",{
 local chan_id = "162428115778404352"
 hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
     if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
+        Tetris.lastPlayedNick = user:Nick() or "No one"
         for i=1,#_msg do
             msg = _msg:sub(i,i):lower()
 
             if msg == "d" then
-                for i=1,#Tetris.data do
-                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
+                for i=1,#Tetris.blockData do
+                    if (Tetris.blockData[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.blockData[i],1,0) then
                         goto next_one
                     end
                 end
@@ -293,8 +381,8 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
                 local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
                 Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
             elseif msg == "a" then
-                for i=1,#Tetris.data do
-                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
+                for i=1,#Tetris.blockData do
+                    if (Tetris.blockData[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.blockData[i],1,0) then
                         goto next_one
                     end
                 end
@@ -308,24 +396,11 @@ hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
 
                 Tetris.ActiveBlock.block = blockType..ang
 
-                for i=1,#Tetris.data do
-                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
-                        ang = ang - 90
-                        if ang == -90 then ang = 270 end
-                        Tetris.ActiveBlock.block = blockType..ang
-                        goto next_one
-                    end
+                if Tetris:CollisionTestActiveBlock() then
+                    ang = ang - 90
+                    if ang == -90 then ang = 270 end
+                    Tetris.ActiveBlock.block = blockType..ang
                 end
-
-                Tetris:IteratePixels(Tetris.ActiveBlock.block,Tetris.ActiveBlock.x,Tetris.ActiveBlock.y,function(x,y)
-                    if (y > Tetris.Screen.h) or (x > Tetris.Screen.w) then
-                        ang = ang - 90
-                        if ang == -90 then ang = 270 end
-                        Tetris.ActiveBlock.block = blockType..ang
-
-                        return true
-                    end
-                end)
             elseif msg == "s" then
                 Tetris:Tick(Tetris.Screen,false)
             end

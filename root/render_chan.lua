@@ -15,12 +15,12 @@ hook.Add("discord.ready","render",function()
 
         Screen:Clear()
         sandbox:CallHook("Render",Screen)
-        local curScreen = Screen:Render()
+        local curScreen = "```"..Screen:Render().."```\n```"..(Screen.desc or "No description").."```"
 
         if curScreen ~= lastScreen then
             lastScreen = curScreen
 
-            discord.edit(chan_id,msg_id,"```"..curScreen.."```")
+            discord.edit(chan_id,msg_id,curScreen)
         end
     end)
 end)
