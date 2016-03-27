@@ -92,7 +92,7 @@ function Tetris:CheckCollision(block1,block2,x_offset_block1,y_offset_block1)
     return hit
 end
 
-function Tetris:Tick(screen)
+function Tetris:Tick(screen,render)
     if self.ActiveBlock then
         for i=1,#self.data do
             if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],0,1) then
@@ -118,7 +118,9 @@ function Tetris:Tick(screen)
         self.ActiveBlock = self:AddRandomBlock(screen)
     end
 
-    self:DrawBoard(screen)
+    if render then
+        self:DrawBoard(screen)
+    end
 end
 
 Tetris:Reset()
@@ -209,52 +211,126 @@ Tetris:RegisterBlock("Rect-270",{
     {X,X,X,X}
 })
 
+Tetris:RegisterBlock("T-0",{
+    {O,X,O},
+    {X,X,X}
+})
+
+Tetris:RegisterBlock("T-90",{
+    {X,O},
+    {X,X},
+    {X,O}
+})
+
+Tetris:RegisterBlock("T-180",{
+    {X,X,X},
+    {O,X,O}
+})
+
+Tetris:RegisterBlock("T-270",{
+    {O,X},
+    {X,X},
+    {O,X}
+})
+
+Tetris:RegisterBlock("Z-1-0",{
+    {O,X},
+    {X,X},
+    {X,O}
+})
+
+Tetris:RegisterBlock("Z-1-90",{
+    {X,X,O},
+    {O,X,X}
+})
+
+Tetris:RegisterBlock("Z-1-180",{
+    {O,X},
+    {X,X},
+    {X,O}
+})
+
+Tetris:RegisterBlock("Z-1-270",{
+    {X,X,O},
+    {O,X,X}
+})
+
+Tetris:RegisterBlock("Z-2-0",{
+    {X,O},
+    {X,X},
+    {O,X}
+})
+
+Tetris:RegisterBlock("Z-2-90",{
+    {O,X,X},
+    {X,X,O}
+})
+
+Tetris:RegisterBlock("Z-2-180",{
+    {X,O},
+    {X,X},
+    {O,X}
+})
+
+Tetris:RegisterBlock("Z-2-270",{
+    {O,X,X},
+    {X,X,O}
+})
+
 local chan_id = "162428115778404352"
-hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
+hook.Add("ChatMessage","Tetris",function(chatroom,user,_msg)
     if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
-        if msg == ">" then
-            for i=1,#Tetris.data do
-                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
-                    return
+        for i=1,#_msg do
+            msg = _msg:sub(i,i):lower()
+
+            if msg == "d" then
+                for i=1,#Tetris.data do
+                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
+                        goto next_one
+                    end
                 end
+
+                local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
+                Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
+            elseif msg == "a" then
+                for i=1,#Tetris.data do
+                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
+                        goto next_one
+                    end
+                end
+
+                Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
+            elseif msg == "s" then
+                local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
+
+                ang = tonumber(ang) + 90
+                if ang == 360 then ang = 0 end
+
+                Tetris.ActiveBlock.block = blockType..ang
+
+                for i=1,#Tetris.data do
+                    if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
+                        ang = ang - 90
+                        if ang == -90 then ang = 270 end
+                        Tetris.ActiveBlock.block = blockType..ang
+                        goto next_one
+                    end
+                end
+
+                Tetris:IteratePixels(Tetris.ActiveBlock.block,Tetris.ActiveBlock.x,Tetris.ActiveBlock.y,function(x,y)
+                    if (y > Tetris.Screen.h) or (x > Tetris.Screen.w) then
+                        ang = ang - 90
+                        if ang == -90 then ang = 270 end
+                        Tetris.ActiveBlock.block = blockType..ang
+
+                        return true
+                    end
+                end)
+            elseif msg == "w" then
+                Tetris:Tick(Tetris.Screen,false)
             end
 
-            local w,h = Tetris:BlockSize(Tetris.ActiveBlock.block)
-            Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
-        elseif msg == "<" then
-            for i=1,#Tetris.data do
-                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
-                    return
-                end
-            end
-
-            Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
-        elseif msg == "R" then
-            local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
-
-            ang = tonumber(ang) + 90
-            if ang == 360 then ang = 0 end
-
-            Tetris.ActiveBlock.block = blockType..ang
-
-            for i=1,#Tetris.data do
-                if (Tetris.data[i] ~= Tetris.ActiveBlock) and Tetris:CheckCollision(Tetris.ActiveBlock,Tetris.data[i],1,0) then
-                    ang = ang - 90
-                    if ang == -90 then ang = 270 end
-                    Tetris.ActiveBlock.block = blockType..ang
-                    return
-                end
-            end
-
-            Tetris:IteratePixels(Tetris.ActiveBlock.block,Tetris.ActiveBlock.x,Tetris.ActiveBlock.y,function(x,y)
-                if (y > Tetris.Screen.h) or (x > Tetris.Screen.w) then
-                    ang = ang - 90
-                    if ang == -90 then ang = 270 end
-                    Tetris.ActiveBlock.block = blockType..ang
-
-                    return true
-                end
-            end)
+            ::next_one::
         end
     end
 end)
@@ -262,5 +338,5 @@ end)
 hook.Add("Render","Tetris",function(screen)
     PrintInternal("TICK")
     Tetris.Screen = screen
-    Tetris:Tick(screen)
+    Tetris:Tick(screen,true)
 end)
