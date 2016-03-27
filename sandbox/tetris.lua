@@ -1,4 +1,4 @@
-local PrintInternal = PrintInternal
+local PrintInternal = print
 local Tetris = {}
 
 Tetris.blocks = {}
@@ -26,6 +26,7 @@ end
 
 function Tetris:DrawBlock(screen,block,x,y)
     self:IteratePixels(block,x,y,function(x,y)
+        PrintInternal("DRAW XY ",x,y)
         screen:DrawDot(x,y)
     end)
 end
@@ -71,6 +72,7 @@ function Tetris:Tick(screen)
     if self.ActiveBlock then
         for i=1,#self.data do
             if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],-1) then
+                PrintInternal("HIT ACTIVE BLOCK")
                 self.ActiveBlock = nil
                 break
             end
