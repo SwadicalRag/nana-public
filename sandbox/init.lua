@@ -13,3 +13,5 @@ require("morse")
 require("d_s_relay")
 
 require("sed")
+
+require("tetris")
