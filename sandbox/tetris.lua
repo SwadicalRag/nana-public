@@ -33,7 +33,7 @@ end
 function Tetris:AddBlock(block,x,y)
     PrintInternal("ADD BLOCK "..block)
 
-    self.data[#self.data + 1] {
+    self.data[#self.data + 1] = {
         x = x,
         y = y,
         block = block
