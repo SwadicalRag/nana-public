@@ -1,4 +1,4 @@
-local PrintInternal = print
+local PrintInternal = function()end
 local Tetris = {}
 
 Tetris.blocks = {}
@@ -26,6 +26,22 @@ function Tetris:IteratePixels(block,x,y,callback)
     end
 end
 
+function Tetris:BlockSize(block)
+    -- local min_x,max_y = 0,0
+    -- local min_y,max_y = 0,0
+
+    local max_x,max_y = 0,0
+    self:IteratePixels(block,0,0,function(x,y)
+        -- min_x = math.min(min_x,x)
+        max_x = math.max(max_x,x)
+
+        -- min_y = math.min(min_y,y)
+        max_y = math.max(max_y,y)
+    end)
+
+    return max_x,max_y
+end
+
 function Tetris:DrawBlock(screen,block,x,y)
     self:IteratePixels(block,x,y,function(x,y)
         PrintInternal("DRAW XY ",x,y)
@@ -45,8 +61,14 @@ function Tetris:AddBlock(block,x,y)
     return self.data[#self.data]
 end
 
-function Tetris:AddRandomBlock(x,y)
-    return self:AddBlock(self.blockTypes[math.random(1,#self.blockTypes)],x,y)
+function Tetris:AddRandomBlock(screen)
+    local block = self.blockTypes[math.random(1,#self.blockTypes)]
+    local w,h = self:BlockSize(block)
+    return self:AddBlock(
+        block,
+        math.random(1,screen.w - w),
+        1
+    )
 end
 
 function Tetris:DrawBoard(screen)
@@ -93,7 +115,7 @@ function Tetris:Tick(screen)
             end)
         end
     else
-        self.ActiveBlock = self:AddRandomBlock(math.random(1,screen.w),1)
+        self.ActiveBlock = self:AddRandomBlock(screen)
     end
 
     self:DrawBoard(screen)
@@ -101,12 +123,120 @@ end
 
 Tetris:Reset()
 
-Tetris:RegisterBlock("L-1",{
+Tetris:RegisterBlock("L-1-0",{
     {X,O,O},
     {X,X,X}
 })
 
+Tetris:RegisterBlock("L-1-90",{
+    {X,X},
+    {X,O},
+    {X,O}
+})
+
+Tetris:RegisterBlock("L-1-180",{
+    {X,X,X},
+    {O,O,X}
+})
+
+Tetris:RegisterBlock("L-1-270",{
+    {O,X},
+    {O,X},
+    {X,X}
+})
+
+Tetris:RegisterBlock("L-2-0",{
+    {O,O,X},
+    {X,X,X}
+})
+
+Tetris:RegisterBlock("L-2-90",{
+    {X,O},
+    {X,O},
+    {X,X}
+})
+
+Tetris:RegisterBlock("L-2-180",{
+    {X,X,X},
+    {X,O,O}
+})
+
+Tetris:RegisterBlock("L-2-270",{
+    {X,X},
+    {O,X},
+    {O,X}
+})
+
+Tetris:RegisterBlock("Box-0",{
+    {X,X},
+    {X,X}
+})
+
+Tetris:RegisterBlock("Box-90",{
+    {X,X},
+    {X,X}
+})
+
+Tetris:RegisterBlock("Box-180",{
+    {X,X},
+    {X,X}
+})
+
+Tetris:RegisterBlock("Box-270",{
+    {X,X},
+    {X,X}
+})
+
+Tetris:RegisterBlock("Rect-0",{
+    {X},
+    {X},
+    {X},
+    {X}
+})
+
+Tetris:RegisterBlock("Rect-90",{
+    {X},
+    {X},
+    {X},
+    {X}
+})
+
+Tetris:RegisterBlock("Rect-180",{
+    {X},
+    {X},
+    {X},
+    {X}
+})
+
+Tetris:RegisterBlock("Rect-270",{
+    {X},
+    {X},
+    {X},
+    {X}
+})
+
+local chan_id = "162428115778404352"
+hook.Add("ChatMessage","Tetris",function(chatroom,user,msg)
+    if (chatroom.id == chan_id) and Tetris.ActiveBlock and Tetris.Screen then
+        if msg == ">" then
+            local w,h = Tetris:BlockSize(Tetris.ActiveBlock)
+            Tetris.ActiveBlock.x = math.min(Tetris.ActiveBlock.x + 1,Tetris.Screen.w - w)
+        elseif msg == "<" then
+            local w,h = Tetris:BlockSize(Tetris.ActiveBlock)
+            Tetris.ActiveBlock.x = math.max(1,Tetris.ActiveBlock.x - 1)
+        elseif msg == "R" then
+            local blockType,ang = Tetris.ActiveBlock.block:match("^(.-)(%d+)$")
+
+            ang = tonumber(ang) + 90
+            if ang == 360 then ang = 0 end
+
+            Tetris.ActiveBlock.block = blockType..ang
+        end
+    end
+end)
+
 hook.Add("Render","Tetris",function(screen)
     PrintInternal("TICK")
+    Tetris.Screen = screen
     Tetris:Tick(screen)
 end)
