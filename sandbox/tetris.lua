@@ -17,9 +17,11 @@ function Tetris:Reset()
 end
 
 function Tetris:IteratePixels(block,x,y,callback)
-    for i2=0,#block do
-        for i1=0,#block[i2] do
-            if callback(i2 + x,i1 + y) then return true end
+    for y_amt=1,#block do
+        for x_amt=1,#block[y_amt] do
+            if block[i2][i1] == X then
+                if callback(x_amt + x - 1,y_amt + y - 1) then return true end
+            end
         end
     end
 end
@@ -80,6 +82,15 @@ function Tetris:Tick(screen)
 
         if self.ActiveBlock then
             self.ActiveBlock.y = self.ActiveBlock.y + 1
+
+            self:IteratePixels(self.ActiveBlock.block,self.ActiveBlock.x,self.ActiveBlock.y,function(x,y)
+                if y > screen.h then
+                    self.ActiveBlock.y = self.ActiveBlock.y - 1
+                    self.ActiveBlock = nil
+
+                    return true
+                end
+            end)
         end
     else
         self.ActiveBlock = self:AddRandomBlock(math.random(1,screen.w),1)
