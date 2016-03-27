@@ -188,8 +188,8 @@ function Tetris:Tick(screen,render,spawn_block_anyway)
                 for _y=y,screen.h do
                     if self.screenData[_x] and self.screenData[_x][_y] then
                         self.screenData[_x][_y] = nil
-                        if (_y - 1) >= 1 then
-                            self.screenData[_x][_y - 1] = true
+                        if (_y + 1) <= screen.h then
+                            self.screenData[_x][_y + 1] = true
                         end
                     end
                 end
