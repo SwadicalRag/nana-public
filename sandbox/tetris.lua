@@ -71,7 +71,7 @@ end
 function Tetris:Tick(screen)
     if self.ActiveBlock then
         for i=1,#self.data do
-            if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],-1) then
+            if (self.data[i] ~= self.ActiveBlock) and self:CheckCollision(self.ActiveBlock,self.data[i],1) then
                 PrintInternal("HIT ACTIVE BLOCK")
                 self.ActiveBlock = nil
                 break
@@ -79,7 +79,7 @@ function Tetris:Tick(screen)
         end
 
         if self.ActiveBlock then
-            self.ActiveBlock.y = self.ActiveBlock.y - 1
+            self.ActiveBlock.y = self.ActiveBlock.y + 1
         end
     else
         self.ActiveBlock = self:AddRandomBlock(math.random(1,screen.w),1)
