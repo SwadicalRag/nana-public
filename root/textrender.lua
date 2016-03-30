@@ -25,7 +25,8 @@ function Renderer:NewContext(w,h)
             "░",
             "▒",
             "▓"
-        }
+        },
+        glyphs = {}
     }
 
     function Context:SetupScreen()
@@ -52,6 +53,41 @@ function Renderer:NewContext(w,h)
 
     function Context:Diff(n1,n2)
         return math.abs(n1 - n2)
+    end
+
+    function Context:RegisterGlyph(id,data)
+        self.glyphs[id] = data
+    end
+
+    function Context:IterateGlyphPixels(glyph,x,y,callback)
+        assert(self.glyphs[glyph],"Glyph "..tostring(glyph).." does not exist")
+
+        for y_amt=1,#self.glyphs[glyph] do
+            for x_amt=1,#self.glyphs[glyph][y_amt] do
+                if self.glyphs[glyph][y_amt][x_amt] == X then
+                    if callback(x_amt + x - 1,y_amt + y - 1) then return true end
+                end
+            end
+        end
+    end
+
+    function Context:GlyphSize(glyph)
+        assert(self.glyphs[glyph],"Glyph "..tostring(glyph).." does not exist")
+
+        local max_x,max_y = 0,0
+        self:IterateGlyphPixels(glyph,0,0,function(x,y)
+            max_x = math.max(max_x,x)
+            max_y = math.max(max_y,y)
+        end)
+
+        return max_x,max_y
+    end
+
+    function Tetris:DrawGlyph(glyph,x,y)
+        assert(self.glyphs[glyph],"Glyph "..tostring(glyph).." does not exist")
+        self:IteratePixels(glyph,x,y,function(x,y)
+            self:DrawDot(x,y)
+        end)
     end
 
     function Context:Vector(x,y,z)
