@@ -83,9 +83,19 @@ function Renderer:NewContext(w,h)
         return max_x,max_y
     end
 
-    function Tetris:DrawGlyph(glyph,x,y)
+    function Context:DrawGlyph(glyph,x,y,orientation)
         assert(self.glyphs[glyph],"Glyph "..tostring(glyph).." does not exist")
-        self:IteratePixels(glyph,x,y,function(x,y)
+        local x_offset,y_offset = 0,0
+
+        if orientation == "center" then
+            local w,h = self:GlyphSize(glyph)
+
+            x_offset,y_offset = -w/2,-h/2
+        elseif orientation == "right" then
+            x_offset,y_offset = w/2,h/2
+        end
+
+        self:IteratePixels(glyph,x + x_offset,y + y_offset,function(x,y)
             self:DrawDot(x,y)
         end)
     end
