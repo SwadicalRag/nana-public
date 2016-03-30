@@ -64,8 +64,8 @@ function Renderer:NewContext(w,h)
 
         for y_amt=1,#self.glyphs[glyph] do
             for x_amt=1,#self.glyphs[glyph][y_amt] do
-                if self.glyphs[glyph][y_amt][x_amt] == X then
-                    if callback(x_amt + x - 1,y_amt + y - 1) then return true end
+                if self.glyphs[glyph][y_amt][x_amt] then
+                    if callback(x_amt + x - 1,y_amt + y - 1,self.glyphs[glyph][y_amt][x_amt]) then return true end
                 end
             end
         end
@@ -92,11 +92,11 @@ function Renderer:NewContext(w,h)
 
             x_offset,y_offset = -w/2,-h/2
         elseif orientation == "right" then
-            x_offset,y_offset = w/2,h/2
+            x_offset,y_offset = -w,-h
         end
 
-        self:IterateGlyphPixels(glyph,x + x_offset,y + y_offset,function(x,y)
-            self:DrawDot(x,y)
+        self:IterateGlyphPixels(glyph,x + x_offset,y + y_offset,function(x,y,status)
+            self:DrawDot(x,y,status)
         end)
     end
 
