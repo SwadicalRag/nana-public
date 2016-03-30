@@ -95,7 +95,7 @@ function Renderer:NewContext(w,h)
             x_offset,y_offset = w/2,h/2
         end
 
-        self:IteratePixels(glyph,x + x_offset,y + y_offset,function(x,y)
+        self:IterateGlyphPixels(glyph,x + x_offset,y + y_offset,function(x,y)
             self:DrawDot(x,y)
         end)
     end
