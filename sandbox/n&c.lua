@@ -21,6 +21,8 @@ function NC:Draw(screen)
 
     local x,y = self:GridToScreen(2,2)
     screen:DrawGlyph("X",x,y,"center")
+    local x,y = self:GridToScreen(3,3)
+    screen:DrawGlyph("O",x,y,"center")
 end
 
 local ready = false
@@ -30,19 +32,25 @@ hook.Add("Render","Noughts and Crosses",function(screen)
         local O,X = false,true
 
         screen:RegisterGlyph("X",{
-            {X,O,O,O,X},
-            {O,X,O,X,O},
-            {O,O,X,O,O},
-            {O,X,O,X,O},
-            {X,O,O,O,X}
+            -- {X,O,O,O,X},
+            -- {O,X,O,X,O},
+            -- {O,O,X,O,O},
+            -- {O,X,O,X,O},
+            -- {X,O,O,O,X}
+            {X,O,X},
+            {O,X,O},
+            {X,O,X},
         })
 
         screen:RegisterGlyph("O",{
-            {X,X,X,X,X},
-            {X,O,O,O,X},
-            {X,O,O,O,X},
-            {X,O,O,O,X},
-            {X,X,X,X,X}
+            -- {X,X,X,X,X},
+            -- {X,O,O,O,X},
+            -- {X,O,O,O,X},
+            -- {X,O,O,O,X},
+            -- {X,X,X,X,X}
+            {X,X,X},
+            {X,O,X},
+            {X,X,X}
         })
     end
 
