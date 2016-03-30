@@ -23,26 +23,28 @@ function NC:Draw(screen)
     screen:DrawGlyph("X",x,y,"center")
 end
 
-hook.Add("RenderscapeReady","Noughts and Crosses",function(screen)
-    local O,X = false,true
-
-    screen:RegisterGlyph("X",{
-        {X,O,O,O,X},
-        {O,X,O,X,O},
-        {O,O,X,O,O},
-        {O,X,O,X,O},
-        {X,O,O,O,X}
-    })
-
-    screen:RegisterGlyph("O",{
-        {X,X,X,X,X},
-        {X,O,O,O,X},
-        {X,O,O,O,X},
-        {X,O,O,O,X},
-        {X,X,X,X,X}
-    })
-end)
-
+local ready = false
 hook.Add("Render","Noughts and Crosses",function(screen)
+    if not ready then
+        ready = true
+        local O,X = false,true
+
+        screen:RegisterGlyph("X",{
+            {X,O,O,O,X},
+            {O,X,O,X,O},
+            {O,O,X,O,O},
+            {O,X,O,X,O},
+            {X,O,O,O,X}
+        })
+
+        screen:RegisterGlyph("O",{
+            {X,X,X,X,X},
+            {X,O,O,O,X},
+            {X,O,O,O,X},
+            {X,O,O,O,X},
+            {X,X,X,X,X}
+        })
+    end
+
     NC:Draw(screen)
 end)

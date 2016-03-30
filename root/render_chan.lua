@@ -10,14 +10,10 @@ hook.Add("discord.ready","render",function()
     if not msg_id then return print("unable to load this shit") end
 
     local lastScreen = ""
-    local ready = false
     timer.Create("rendering",1,0,function()
         discord.clearExcept(chan_id,msg_id)
 
-        if not ready then
-            ready = true
-            hook.Call("RenderscapeReady",Screen)
-        end
+        hook.Call("PreRender",Screen)
 
         Screen:Clear()
         sandbox:CallHook("Render",Screen)
