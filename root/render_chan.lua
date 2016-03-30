@@ -10,6 +10,7 @@ hook.Add("discord.ready","render",function()
     if not msg_id then return print("unable to load this shit") end
 
     local lastScreen = ""
+    hook.Call("RenderscapeReady",Screen)
     timer.Create("rendering",1,0,function()
         discord.clearExcept(chan_id,msg_id)
 
