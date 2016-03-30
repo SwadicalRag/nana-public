@@ -1,7 +1,7 @@
 local NC = {}
 
 function NC:GridToScreen(x,y)
-    return x * 4 + (x-1) * 2
+    return x * 4 + (x-1) * 2,y * 4 + (y-1) * 2
 end
 
 function NC:DrawGrid(screen)
