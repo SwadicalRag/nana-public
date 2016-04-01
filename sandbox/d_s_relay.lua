@@ -26,7 +26,7 @@ end
 
 hook.Add("ChatMessage","relay",function(channel,user,msg)
     if channel:IsDiscord() then
-        discordUser.GetAudience() -- CACHE AUDIENCE
+        discordUser._internalCache(channel.id) -- CACHE AUDIENCE
         if channel.id == targetDiscordChannel then
             local targetChat = steamChat.GetBySteamID(targetSteamChat)
             if targetChat then

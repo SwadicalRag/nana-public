@@ -57,6 +57,12 @@ function discordUser.GetAudience()
     return audience
 end
 
+function discordUser._internalCache(chan_id)
+    for i,id in pairs(discord.getAudience(chan_id)) do
+        discordUser.GetByID(id)
+    end
+end
+
 function discordUser.GetByName(search)
     for id,discordUserData in pairs(discordUsers) do
         if discordUserData.username:lower():match(search:lower()) then
