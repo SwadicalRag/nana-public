@@ -82,6 +82,10 @@ command.Add("soundcloud",function(url,reply,replyPersonal,user,chatroom)
     end
 end,"play music","url",COMMAND_MODERATOR,"discord")
 
+command.Add("playurl",function(url,reply,replyPersonal,user,chatroom)
+    discord.playURL(url)
+end,"play music","url",COMMAND_MODERATOR,"discord")
+
 command.Add("youtube",function(url,reply,replyPersonal,user,chatroom)
     discord.playYoutube(url)
 end,"play music","url",COMMAND_MODERATOR,"discord")
