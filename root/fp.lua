@@ -1,8 +1,9 @@
 CookieLib:GetInternal().fpthreads = CookieLib:GetInternal().fpthreads or {}
 
 local function isThreadBeingWatched(name)
+    name = name:lower()
     for i,match in ipairs(CookieLib:GetInternal().fpthreads) do
-        if string.find(name,match,1,true) then
+        if string.find(name,match:lower(),1,true) then
             return true,i,match
         end
     end
