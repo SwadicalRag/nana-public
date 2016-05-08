@@ -23,5 +23,5 @@ hook.Add("discord.messageEx","UserMessageHook",function(username,userID,msg,chan
 end)
 
 hook.Add("fp.ThreadUpdate","OnNewFPThread",function(...)
-    sandbox:CallHook("OnNewFPThread","aaa",...);
+    sandbox:CallHook("OnNewFPThread",...);
 end)
