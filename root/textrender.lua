@@ -212,6 +212,37 @@ function Renderer:NewContext(w,h)
         end
     end
 
+    TEXT_ALIGN_CENTER = 1
+    TEXT_ALIGN_LEFT = 2
+    TEXT_ALIGN_RIGHT = 3
+    sandbox.TEXT_ALIGN_CENTER = TEXT_ALIGN_CENTER
+    sandbox.TEXT_ALIGN_LEFT = TEXT_ALIGN_LEFT
+    sandbox.TEXT_ALIGN_RIGHT = TEXT_ALIGN_RIGHT
+
+    function Context:DrawText(text,x,y,align)
+        align = align or TEXT_ALIGN_LEFT
+
+        local len = utf8.len(text)
+        local i = 1
+        for _,code in utf8.codes(text) do
+            local char = utf8.char(code)
+            if char:match("[%a%d]") then
+                char = utf8.char(code + 65248)
+            elseif ((code - 65248) > 0) and not utf8.char(code - 65248):match("[%a%d]") then
+                char = char.." "
+            end
+
+            if align == TEXT_ALIGN_RIGHT then
+                self.screen[x - i + 1 + len][y] = char
+            elseif align == TEXT_ALIGN_CENTER then
+                self.screen[x + i - 1 + self:Round(len/2)][y] = char
+            else
+                self.screen[x + i - 1][y] = char
+            end
+            i = i + 1
+        end
+    end
+
     function Context:DrawLine(_x1,_y1,_x2,_y2)
         local x1,x2 = self:Round(math.min(_x1,_x2)),self:Round(math.max(_x1,_x2))
         local y1,y2 = self:Round(math.min(_y1,_y2)),self:Round(math.max(_y1,_y2))

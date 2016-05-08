@@ -29,7 +29,10 @@ function includeSandbox(path)
     local fn,err = load(data,path,nil,sandbox.env)
     if not fn then error(err) end
 
+    local lastIsInitialising = sandbox.isInitialising
+    sandbox.isInitialising = true
     local ret = {pcall(fn)}
+    sandbox.isInitialising = lastIsInitialising
     if not ret[1] then error(path..": "..ret[2]) end
     table.remove(ret,1)
 
@@ -66,8 +69,11 @@ include("commands/help.lua")
 
 include("discord_music.lua")
 
+include("fp.lua")
+
 include("hooks.lua")
 include("markov_exp.lua")
+-- include("learn.lua")
 
 include("textrender.lua")
 include("render_chan.lua")

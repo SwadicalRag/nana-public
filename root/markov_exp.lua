@@ -1,11 +1,15 @@
 if true then return end
-
 local sqt = dofile("libs/sqlite_table.lua")
 
 local Markov = {}
 Markov.chain = sqt.new("markov_chain")
 Markov.firstWords = sqt.new("markov_firstwords")
 Markov.firstWords[0] = Markov.firstWords[0] or 0
+
+function Markov:Save()
+    sqlite3.save_disk_memory("markov_chain.sqlite3")
+    sqlite3.save_disk_memory("markov_firstwords.sqlite3")
+end
 
 function Markov:Learn(sentence,firstLearn,aux)
     local lastWord,lastChain
@@ -118,5 +122,5 @@ function Markov:Generate(start,maxLength,depth)
 end
 
 timer.Simple(1,function()
-    -- sandbox.env.Markov = Markov
+    sandbox.env.Markov = Markov
 end)
