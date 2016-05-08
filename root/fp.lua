@@ -11,7 +11,7 @@ local function isThreadBeingWatched(name)
     return false
 end
 
-hook.Add("fp.ThreadUpdate","OnNewFPThread",function(threadName,threadID,isFirst)
+hook.Add("fp.ThreadUpdate","Ticker",function(threadName,threadID,isFirst)
     if isFirst then return end
 
     if isThreadBeingWatched(threadName) then
