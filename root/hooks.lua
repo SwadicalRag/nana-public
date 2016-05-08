@@ -25,5 +25,3 @@ end)
 hook.Add("fp.ThreadUpdate","OnNewFPThread",function(...)
     sandbox:CallHook("OnNewFPThread","aaa",...);
 end)
-
-hook.Add("fp.ThreadUpdate","aaa",print);

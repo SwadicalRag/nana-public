@@ -20,9 +20,9 @@ hook.Add("fp.ThreadUpdate","OnNewFPThread",function(threadName,threadID,isFirst)
 end)
 
 command.Add("fplist",function(_,reply,replyPersonal,user,chatroom)
-    reply("== Facepunch thread watcher ==")
+    reply("== Facepunch thread watcher ==\n")
     for i,match in ipairs(CookieLib:GetInternal().fpthreads) do
-        reply("%d. %s",i,match)
+        reply("%d. %s\n",i,match)
     end
 end)
 
