@@ -16,7 +16,8 @@ hook.Add("fp.ThreadUpdate","Ticker",function(threadName,threadID,isFirst)
 
     if isThreadBeingWatched(threadName) then
         if #threadName > 60 then threadName = threadName:sub(1,57).."..." end
-        broadcast(threadName.." - http://facepunch.com/showthread.php?p="..threadID.."#post="..threadID.."\n")
+        -- broadcast(threadName.." - http://facepunch.com/showthread.php?p="..threadID.."#post="..threadID.."\n")
+        broadcast(threadName.." - http://fcpn.ch#"..toBase62(threadID).."\n")
     end
 end)
 
