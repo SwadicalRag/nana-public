@@ -60,8 +60,10 @@ hook.Add("ChatMessage","relay",function(channel,user,msg)
 end)
 
 function RELAY_EQUALITY(c1,c2)
-    if (c1.id == targetSteamChat) or (c1.id == targetDiscordChannel)
-    and (c2.id == targetSteamChat) or (c2.id == targetDiscordChannel) then
+    local c1id = c1.id or c1:SteamID():ID64()
+    local c2id = c2.id or c2:SteamID():ID64()
+    if (c1id == targetSteamChat) or (c1id == targetDiscordChannel)
+    and (c2id == targetSteamChat) or (c2id == targetDiscordChannel) then
         return true
     else
         return false
