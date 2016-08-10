@@ -8,6 +8,7 @@ local soundcloudURLs = {
 local queue = {}
 
 local function update()
+    discord.stopMusic()
     local data = queue[1]
     
     if data and data.url then
@@ -115,7 +116,6 @@ command.Add("youtube",function(url,reply,replyPersonal,user,chatroom)
 end,"play youtube","url",COMMAND_ALL,"discord")
 
 command.Add("skip",function(url,reply,replyPersonal,user,chatroom)
-    discord.stopMusic()
     table.remove(queue,1)
     update()
 end,"skip music",nil,COMMAND_MODERATOR,"discord")
@@ -127,7 +127,6 @@ command.Add("queue",function(_,reply,replyPersonal,user,chatroom)
 end,"play music",nil,COMMAND_ALL,"discord")
 
 command.Add("queue_update",function(_,reply,replyPersonal,user,chatroom)
-    discord.stopMusic()
     table.remove(queue,1)
     update()
 end,"play music",nil,COMMAND_MODERATOR,"discord")
@@ -136,7 +135,7 @@ command.Add("queue_remove",function(n,reply,replyPersonal,user,chatroom)
     n = tonumber(n)
     
     if n and (n == n) and queue[n] then
-        if n == 1 then discord.stopMusic() end
         table.remove(queue,n)
+        if n == 1 then update() end
     end
 end,"play music",nil,COMMAND_MODERATOR,"discord")
