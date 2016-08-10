@@ -13,7 +13,7 @@ local function update()
     if data.url then
         data.channel:Say("Now Playing: \""..data.name.."\"")
         
-        if url.source == "youtube" then
+        if data.source == "youtube" then
             discord.playYoutube(data.url)
         else
             discord.playURL(data.url,0.75)
@@ -29,6 +29,7 @@ local function add(url,source,name,user,channel)
         user = user,
         channel = channel,
     }
+    
     if #queue == 1 then update() end
 end
 
