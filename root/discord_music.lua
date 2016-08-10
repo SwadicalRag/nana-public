@@ -22,13 +22,14 @@ local function update()
 end
 
 local function add(url,source,name,user,channel)
-    data[#data + 1] = {
+    queue[#queue + 1] = {
         url = url,
         source = source,
         name = name,
         user = user,
         channel = channel,
     }
+    if #queue == 1 then update() end
 end
 
 local function parseUrl(url)
@@ -123,6 +124,12 @@ command.Add("queue",function(_,reply,replyPersonal,user,chatroom)
         reply("%d - (%s) %s (requested by %s)\n",i,data.source,data.name,data.user:Nick())
     end
 end,"play music",nil,COMMAND_ALL,"discord")
+
+command.Add("queue_update",function(_,reply,replyPersonal,user,chatroom)
+    discord.stopMusic()
+    table.remove(queue,1)
+    update()
+end,"play music",nil,COMMAND_MODERATOR,"discord")
 
 command.Add("queue_remove",function(n,reply,replyPersonal,user,chatroom)
     n = tonumber(n)
