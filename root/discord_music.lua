@@ -10,7 +10,7 @@ local queue = {}
 local function update()
     local data = queue[#queue]
     
-    if url then
+    if data.url then
         data.channel:Say("Now Playing: \""..data.name.."\"")
         
         if url.source == "youtube" then
