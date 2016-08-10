@@ -5,6 +5,32 @@ local soundcloudURLs = {
     "^https?://soundcloud.com/([A-Za-z0-9_%-]+/[A-Za-z0-9_%-]+)/?$",
 }
 
+local queue = {}
+
+local function update()
+    local data = queue[#queue]
+    
+    if url then
+        data.channel:Say("Now Playing: \""..data.name.."\"")
+        
+        if url.source == "youtube" then
+            discord.playYoutube(data.url)
+        else
+            discord.playURL(data.url,0.75)
+        end
+    end
+end
+
+local function add(url,source,name,user,channel)
+    data[#data + 1] = {
+        url = url,
+        source = source,
+        name = name,
+        user = user,
+        channel = channel,
+    }
+end
+
 local function parseUrl(url)
     for _,pattern in pairs(soundcloudURLs) do
         local id = string.match(url,pattern)
@@ -50,13 +76,6 @@ function queryURL(url,callback)
     end)
 end
 
-local function play_SC_URL(url)
-    resolveSoundCloudURL(url,function(bass_url)
-        discord.playURL(bass_url,0.75)
-        print(bass_url)
-    end)
-end
-
 hook.Add("discord.ready","music",function()
     local suc,chanID = discord.joinVoiceChannel("Music");
 
@@ -69,27 +88,47 @@ end)
 
 command.Add("soundcloud",function(url,reply,replyPersonal,user,chatroom)
     if(parseUrl(url)) then
-        play_SC_URL(url)
         queryURL(url,function(err,data)
             if err then
                 reply("Error retrieving metadata: "..err)
             else
-                reply("Now Playing: \""..data.title.."\"")
+                -- reply("Now Playing: \""..data.title.."\"")
             end
+            
+            resolveSoundCloudURL(url,function(bass_url)
+                add(bass_url,"soundcloud",data and data.title or bass_url,user,chatroom)
+            end)
         end)
     else
         reply("Unacceptable URL [Code: 1]")
     end
-end,"play music","url",COMMAND_MODERATOR,"discord")
+end,"play music","url",COMMAND_ALL,"discord")
 
 command.Add("playurl",function(url,reply,replyPersonal,user,chatroom)
-    discord.playURL(url)
-end,"play music","url",COMMAND_MODERATOR,"discord")
+    add(url,"url",url,user,chatroom)
+end,"play raw url","url",COMMAND_ALL,"discord")
 
 command.Add("youtube",function(url,reply,replyPersonal,user,chatroom)
-    discord.playYoutube(url)
-end,"play music","url",COMMAND_MODERATOR,"discord")
+    add(url,"youtube",url,user,chatroom)
+end,"play youtube","url",COMMAND_ALL,"discord")
 
-command.Add("stopmusic",function(url,reply,replyPersonal,user,chatroom)
+command.Add("skip",function(url,reply,replyPersonal,user,chatroom)
     discord.stopMusic()
+    table.remove(queue,1)
+    update()
+end,"skip music",nil,COMMAND_MODERATOR,"discord")
+
+command.Add("queue",function(_,reply,replyPersonal,user,chatroom)
+    for i,data in ipairs(queue) do
+        reply("%d - (%s) %s (requested by %s)\n",i,data.source,data.name,data.user:Nick())
+    end
+end,"play music",nil,COMMAND_ALL,"discord")
+
+command.Add("queue_remove",function(n,reply,replyPersonal,user,chatroom)
+    n = tonumber(n)
+    
+    if n and (n == n) and queue[n] then
+        if n == 1 then discord.stopMusic() end
+        table.remove(queue,n)
+    end
 end,"play music",nil,COMMAND_MODERATOR,"discord")
