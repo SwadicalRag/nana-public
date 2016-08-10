@@ -8,7 +8,7 @@ local soundcloudURLs = {
 local queue = {}
 
 local function update()
-    local data = queue[#queue]
+    local data = queue[1]
     
     if data and data.url then
         data.channel:Say("Now Playing: \""..data.name.."\"")
